@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from './utils/api';
 import { clearAuthToken } from './utils/auth';
+import { subscribeToPushNotifications } from './utils/notifications';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Family from './pages/Family';
@@ -26,10 +27,12 @@ function App() {
     setLoading(false);
   }, []);
 
-  const login = (userData) => {
+  const login = async (userData) => {
     console.log('Login with user:', userData);
     setUser(userData);
     localStorage.setItem('wc26_user', JSON.stringify(userData));
+    
+    await subscribeToPushNotifications(userData.id);
   };
 
   const logout = async () => {
