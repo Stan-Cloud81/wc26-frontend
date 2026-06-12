@@ -97,6 +97,13 @@ function Family({ user }) {
                   <div style={{ fontWeight: '600', fontSize: '0.8rem', textAlign: 'center', maxWidth: '80px' }}>
                     {u.team1_name}
                   </div>
+                  {u.team1_stats && (
+                    <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                      <span style={{ color: 'var(--secondary)' }}>W: {u.team1_stats.wins || 0}</span>
+                      <span>D: {u.team1_stats.draws || 0}</span>
+                      <span style={{ color: 'var(--danger)' }}>L: {u.team1_stats.losses || 0}</span>
+                    </div>
+                  )}
                 </div>
               )}
               
@@ -116,6 +123,13 @@ function Family({ user }) {
                   <div style={{ fontWeight: '600', fontSize: '0.8rem', textAlign: 'center', maxWidth: '80px' }}>
                     {u.team2_name}
                   </div>
+                  {u.team2_stats && (
+                    <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                      <span style={{ color: 'var(--secondary)' }}>W: {u.team2_stats.wins || 0}</span>
+                      <span>D: {u.team2_stats.draws || 0}</span>
+                      <span style={{ color: 'var(--danger)' }}>L: {u.team2_stats.losses || 0}</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
