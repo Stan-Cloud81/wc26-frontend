@@ -46,10 +46,10 @@ function App() {
       }
       setDeferredPrompt(null);
       
-      if (user) {
-        console.log('Subscribing to push notifications after app install...');
-        await subscribeToPushNotifications(user.id);
-      }
+      // if (user) {
+      //   console.log('Subscribing to push notifications after app install...');
+      //   await subscribeToPushNotifications(user.id);
+      // }
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -61,10 +61,10 @@ function App() {
           console.log('Service Worker is ready');
         }
         
-        if (user) {
-          console.log('Service Worker ready, subscribing to push notifications...');
-          await subscribeToPushNotifications(user.id);
-        }
+        // if (user) {
+        //   console.log('Service Worker ready, subscribing to push notifications...');
+        //   await subscribeToPushNotifications(user.id);
+        // }
       }).catch((err) => {
         if (DEBUG_MODE) {
           console.error('Service Worker error:', err);
@@ -98,7 +98,7 @@ function App() {
     setUser(userData);
     localStorage.setItem('wc26_user', JSON.stringify(userData));
     
-    await subscribeToPushNotifications(userData.id);
+    // await subscribeToPushNotifications(userData.id);
   };
 
   const logout = async () => {

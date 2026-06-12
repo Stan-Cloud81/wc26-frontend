@@ -41,34 +41,34 @@ function Home({ user }) {
 
   useEffect(() => {
     fetchData();
-    checkNotificationStatus();
+    // checkNotificationStatus();
     const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  const checkNotificationStatus = () => {
-    if (!('Notification' in window)) {
-      setNotificationStatus('unsupported');
-      return;
-    }
+  // const checkNotificationStatus = () => {
+  //   if (!('Notification' in window)) {
+  //     setNotificationStatus('unsupported');
+  //     return;
+  //   }
 
-    if (Notification.permission === 'granted') {
-      setNotificationStatus('granted');
-    } else if (Notification.permission === 'denied') {
-      setNotificationStatus('denied');
-    } else {
-      setNotificationStatus('default');
-    }
-  };
+  //   if (Notification.permission === 'granted') {
+  //     setNotificationStatus('granted');
+  //   } else if (Notification.permission === 'denied') {
+  //     setNotificationStatus('denied');
+  //   } else {
+  //     setNotificationStatus('default');
+  //   }
+  // };
 
-  const handleEnableNotifications = async () => {
-    const result = await subscribeToPushNotifications(user.id);
-    if (result) {
-      setNotificationStatus('granted');
-    } else {
-      checkNotificationStatus();
-    }
-  };
+  // const handleEnableNotifications = async () => {
+  //   const result = await subscribeToPushNotifications(user.id);
+  //   if (result) {
+  //     setNotificationStatus('granted');
+  //   } else {
+  //     checkNotificationStatus();
+  //   }
+  // };
 
   const fetchData = async () => {
     try {
@@ -134,7 +134,7 @@ function Home({ user }) {
     <div className="container">
       {error && <div className="error">{error}</div>}
       
-      {notificationStatus === 'denied' && (
+      {/* {notificationStatus === 'denied' && (
         <div style={{ 
           background: 'var(--danger)', 
           color: 'white', 
@@ -178,7 +178,7 @@ function Home({ user }) {
             Enable
           </button>
         </div>
-      )}
+      )} */}
       
       <div className="my-team">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
