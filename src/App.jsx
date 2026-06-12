@@ -43,7 +43,6 @@ function App() {
     }
     setUser(null);
     localStorage.removeItem('wc26_user');
-    clearAuthToken();
   };
 
   if (loading) {
