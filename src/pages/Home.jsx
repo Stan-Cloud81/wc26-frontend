@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
+import { subscribeToPushNotifications } from '../utils/notifications';
 
 function Home({ user }) {
   const [matches, setMatches] = useState([]);
   const [teams, setTeams] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [notificationStatus, setNotificationStatus] = useState('checking');
 
   const countryToISO = {
     'Algeria': 'dz', 'Argentina': 'ar', 'Australia': 'au', 'Austria': 'at',
@@ -39,9 +41,34 @@ function Home({ user }) {
 
   useEffect(() => {
     fetchData();
+    checkNotificationStatus();
     const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  const checkNotificationStatus = () => {
+    if (!('Notification' in window)) {
+      setNotificationStatus('unsupported');
+      return;
+    }
+
+    if (Notification.permission === 'granted') {
+      setNotificationStatus('granted');
+    } else if (Notification.permission === 'denied') {
+      setNotificationStatus('denied');
+    } else {
+      setNotificationStatus('default');
+    }
+  };
+
+  const handleEnableNotifications = async () => {
+    const result = await subscribeToPushNotifications(user.id);
+    if (result) {
+      setNotificationStatus('granted');
+    } else {
+      checkNotificationStatus();
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -106,6 +133,52 @@ function Home({ user }) {
   return (
     <div className="container">
       {error && <div className="error">{error}</div>}
+      
+      {notificationStatus === 'denied' && (
+        <div style={{ 
+          background: 'var(--danger)', 
+          color: 'white', 
+          padding: '0.75rem', 
+          borderRadius: '8px', 
+          marginBottom: '1rem',
+          fontSize: '0.85rem'
+        }}>
+          <strong>Notifications Blocked</strong>
+          <p style={{ margin: '0.25rem 0 0 0' }}>
+            You've blocked notifications. To receive match updates, please enable notifications in your browser/phone settings.
+          </p>
+        </div>
+      )}
+      
+      {notificationStatus === 'default' && (
+        <div style={{ 
+          background: 'var(--primary)', 
+          color: 'white', 
+          padding: '0.75rem', 
+          borderRadius: '8px', 
+          marginBottom: '1rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '0.85rem'
+        }}>
+          <span>Enable notifications to get match updates!</span>
+          <button 
+            onClick={handleEnableNotifications}
+            style={{
+              background: 'white',
+              color: 'var(--primary)',
+              border: 'none',
+              padding: '0.5rem 1rem',
+              borderRadius: '6px',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}
+          >
+            Enable
+          </button>
+        </div>
+      )}
       
       <div className="my-team">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
