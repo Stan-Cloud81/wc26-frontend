@@ -61,8 +61,20 @@ function Login({ onLogin }) {
     }
   };
 
-  const handleUserSelect = (user) => {
-    onLogin(user);
+  const handleUserSelect = async (user) => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await axios.post(`${API_URL}/auth/select`, { 
+        user_id: user.id 
+      });
+      if (response.data.success) {
+        onLogin(response.data.user);
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to select user');
+      setLoading(false);
+    }
   };
 
   if (loading && step === 'password') {
