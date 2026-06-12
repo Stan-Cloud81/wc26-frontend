@@ -8,6 +8,27 @@ function Home({ user }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const countryToISO = {
+    'Algeria': 'dz', 'Argentina': 'ar', 'Australia': 'au', 'Austria': 'at',
+    'Belgium': 'be', 'Bosnia and Herzegovina': 'ba', 'Brazil': 'br', 'Canada': 'ca',
+    'Cape Verde': 'cv', 'Colombia': 'co', 'Croatia': 'hr', 'Curaçao': 'cw',
+    'Czech Republic': 'cz', 'Democratic Republic of the Congo': 'cd',
+    'Ecuador': 'ec', 'Egypt': 'eg', 'England': 'gb-eng', 'France': 'fr',
+    'Germany': 'de', 'Ghana': 'gh', 'Haiti': 'ht', 'Iran': 'ir',
+    'Iraq': 'iq', 'Ivory Coast': 'ci', 'Japan': 'jp', 'Jordan': 'jo',
+    'Mexico': 'mx', 'Morocco': 'ma', 'Netherlands': 'nl', 'New Zealand': 'nz',
+    'Norway': 'no', 'Panama': 'pa', 'Paraguay': 'py', 'Portugal': 'pt',
+    'Qatar': 'qa', 'Saudi Arabia': 'sa', 'Scotland': 'gb-sct', 'Senegal': 'sn',
+    'South Africa': 'za', 'South Korea': 'kr', 'Spain': 'es', 'Sweden': 'se',
+    'Switzerland': 'ch', 'Tunisia': 'tn', 'Turkey': 'tr', 'United States': 'us',
+    'Uruguay': 'uy', 'Uzbekistan': 'uz'
+  };
+
+  const getFlagUrl = (country) => {
+    const code = countryToISO[country] || country.toLowerCase().substring(0, 2);
+    return `https://flagcdn.com/w80/${code}.png`;
+  };
+
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 60000);
@@ -56,9 +77,9 @@ function Home({ user }) {
             <div className="flag-container">
               <div className="flag-circle">
                 <img 
-                  src={`https://flagcdn.com/w80/${teams.team1.country.toLowerCase().replace(/ /g, '-')}.png`}
+                  src={getFlagUrl(teams.team1.country)}
                   alt={teams.team1.country}
-                  onError={(e) => { e.target.src = 'https://via.placeholder.com/80?text=1'; }}
+                  onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect fill='%23ddd' width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' font-size='24' text-anchor='middle' dy='.3em' fill='%23999'%3E1%3C/text%3E%3C/svg%3E`; }}
                 />
                 <div className="flag-number">1</div>
               </div>
@@ -69,9 +90,9 @@ function Home({ user }) {
             <div className="flag-container">
               <div className="flag-circle">
                 <img 
-                  src={`https://flagcdn.com/w80/${teams.team2.country.toLowerCase().replace(/ /g, '-')}.png`}
+                  src={getFlagUrl(teams.team2.country)}
                   alt={teams.team2.country}
-                  onError={(e) => { e.target.src = 'https://via.placeholder.com/80?text=2'; }}
+                  onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect fill='%23ddd' width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' font-size='24' text-anchor='middle' dy='.3em' fill='%23999'%3E2%3C/text%3E%3C/svg%3E`; }}
                 />
                 <div className="flag-number">2</div>
               </div>
