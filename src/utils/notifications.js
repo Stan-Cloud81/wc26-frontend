@@ -43,6 +43,16 @@ export const subscribeToPushNotifications = async (userId) => {
 
     const registration = await navigator.serviceWorker.ready;
 
+    const existingSubscription = await registration.pushManager.getSubscription();
+    if (existingSubscription) {
+      console.log('Already subscribed to push notifications');
+      await api.post('/notifications/subscribe', {
+        userId,
+        subscription: JSON.stringify(existingSubscription)
+      });
+      return true;
+    }
+
     const response = await api.get('/notifications/vapid-public-key');
     const vapidPublicKey = response.data.publicKey;
     const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);

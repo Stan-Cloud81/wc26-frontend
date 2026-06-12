@@ -39,21 +39,31 @@ function App() {
       }
     };
 
-    const handleAppInstalled = () => {
+    const handleAppInstalled = async () => {
       if (DEBUG_MODE) {
         console.log('App was installed');
         showToast('App installed successfully!', 'success');
       }
       setDeferredPrompt(null);
+      
+      if (user) {
+        console.log('Subscribing to push notifications after app install...');
+        await subscribeToPushNotifications(user.id);
+      }
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(() => {
+      navigator.serviceWorker.ready.then(async () => {
         if (DEBUG_MODE) {
           console.log('Service Worker is ready');
+        }
+        
+        if (user) {
+          console.log('Service Worker ready, subscribing to push notifications...');
+          await subscribeToPushNotifications(user.id);
         }
       }).catch((err) => {
         if (DEBUG_MODE) {
@@ -81,7 +91,7 @@ function App() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, []);
+  }, [user]);
 
   const login = async (userData) => {
     console.log('Login with user:', userData);
