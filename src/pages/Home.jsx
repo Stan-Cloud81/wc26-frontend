@@ -90,7 +90,7 @@ function Home({ user }) {
               e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='22' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
             }}
           />
-          <h3 style={{ margin: 0 }}>Your Teams</h3>
+          <h3 style={{ margin: 0 }}>My Teams</h3>
         </div>
         <div className="team-flags">
           {teams.team1 && (
