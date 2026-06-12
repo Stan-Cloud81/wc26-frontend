@@ -46,13 +46,40 @@ function Home({ user }) {
 
   const fetchData = async () => {
     try {
-      const [matchesRes, userRes] = await Promise.all([
+      const [matchesRes, usersRes] = await Promise.all([
         axios.get(`${API_URL}/matches?userId=${user.id}`),
-        axios.get(`${API_URL}/users/${user.id}`)
+        axios.get(`${API_URL}/users`)
       ]);
       
       setMatches(Array.isArray(matchesRes.data) ? matchesRes.data : []);
-      setTeams(userRes.data.teams || {});
+      
+      const currentUser = Array.isArray(usersRes.data) 
+        ? usersRes.data.find(u => u.id === user.id) 
+        : null;
+      
+      if (currentUser) {
+        const teamsData = {};
+        if (currentUser.team1_name) {
+          teamsData.team1 = {
+            id: currentUser.team1_id,
+            name: currentUser.team1_name,
+            country: currentUser.team1_country,
+            is_top: currentUser.team1_is_top,
+            stats: currentUser.team1_stats || { wins: 0, draws: 0, losses: 0 }
+          };
+        }
+        if (currentUser.team2_name) {
+          teamsData.team2 = {
+            id: currentUser.team2_id,
+            name: currentUser.team2_name,
+            country: currentUser.team2_country,
+            is_top: currentUser.team2_is_top,
+            stats: currentUser.team2_stats || { wins: 0, draws: 0, losses: 0 }
+          };
+        }
+        setTeams(teamsData);
+      }
+      
       setError('');
     } catch (err) {
       setError('Failed to load data');
@@ -104,6 +131,13 @@ function Home({ user }) {
                 <div className="flag-number">1</div>
               </div>
               <div className="team-name-flag">{teams.team1.name}</div>
+              {teams.team1.stats && (
+                <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                  <span style={{ color: 'var(--secondary)' }}>W: {teams.team1.stats.wins || 0}</span>
+                  <span>D: {teams.team1.stats.draws || 0}</span>
+                  <span style={{ color: 'var(--danger)' }}>L: {teams.team1.stats.losses || 0}</span>
+                </div>
+              )}
             </div>
           )}
           {teams.team2 && (
@@ -117,6 +151,13 @@ function Home({ user }) {
                 <div className="flag-number">2</div>
               </div>
               <div className="team-name-flag">{teams.team2.name}</div>
+              {teams.team2.stats && (
+                <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                  <span style={{ color: 'var(--secondary)' }}>W: {teams.team2.stats.wins || 0}</span>
+                  <span>D: {teams.team2.stats.draws || 0}</span>
+                  <span style={{ color: 'var(--danger)' }}>L: {teams.team2.stats.losses || 0}</span>
+                </div>
+              )}
             </div>
           )}
         </div>
