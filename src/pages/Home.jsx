@@ -43,7 +43,7 @@ function Home({ user }) {
   const fetchData = async () => {
     try {
       const [matchesRes, userRes] = await Promise.all([
-        axios.get(`${API_URL}/matches`),
+        axios.get(`${API_URL}/matches?userId=${user.id}`),
         axios.get(`${API_URL}/users/${user.id}`)
       ]);
       
@@ -67,10 +67,7 @@ function Home({ user }) {
     });
   };
 
-  const userTeamIds = [teams.team1?.id, teams.team2?.id].filter(Boolean);
-  const myMatches = matches.filter(match => 
-    userTeamIds.includes(match.team1_id) || userTeamIds.includes(match.team2_id)
-  );
+  const myMatches = matches;
 
   if (loading) return <div className="loading">Loading...</div>;
 
@@ -89,7 +86,7 @@ function Home({ user }) {
               e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='22' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
             }}
           />
-          <h3 style={{ margin: 0 }}>{user.name}'s Teams</h3>
+          <h3 style={{ margin: 0 }}>Your Teams</h3>
         </div>
         <div className="team-flags">
           {teams.team1 && (
@@ -128,6 +125,20 @@ function Home({ user }) {
         </p>
       ) : (
         myMatches.map((match) => {
+          const opponentUsers = match.opponent_users || [];
+          const myTeam = match.user_team;
+          const opponentTeam = match.opponent_team;
+          
+          const myTeamId = myTeam === 'team1' ? match.team1_id : match.team2_id;
+          const myTeamName = myTeam === 'team1' ? match.team1_name : match.team2_name;
+          const myTeamCountry = myTeam === 'team1' ? match.team1_country : match.team2_country;
+          const myScore = myTeam === 'team1' ? match.score1 : match.score2;
+          
+          const oppTeamId = opponentTeam === 'team1' ? match.team1_id : match.team2_id;
+          const oppTeamName = opponentTeam === 'team1' ? match.team1_name : match.team2_name;
+          const oppTeamCountry = opponentTeam === 'team1' ? match.team1_country : match.team2_country;
+          const oppScore = opponentTeam === 'team1' ? match.score1 : match.score2;
+
           return (
             <div 
               key={match.id} 
@@ -138,29 +149,47 @@ function Home({ user }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                   <div className="team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                     <img 
-                      src={getFlagUrl(match.team1_country)}
-                      alt={match.team1_country}
+                      src={getFlagUrl(myTeamCountry)}
+                      alt={myTeamCountry}
                       style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}
                       onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%23ddd' width='40' height='40'/%3E%3C/svg%3E`; }}
                     />
-                    <div className="team-name">{match.team1_name}</div>
+                    <div className="team-name">{myTeamName}</div>
                   </div>
                   <div className="score">
                     {match.status === 'finished' ? 
-                      `${match.score1} - ${match.score2}` : 
+                      `${myScore} - ${oppScore}` : 
                       'vs'
                     }
                   </div>
                   <div className="team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                     <img 
-                      src={getFlagUrl(match.team2_country)}
-                      alt={match.team2_country}
+                      src={getFlagUrl(oppTeamCountry)}
+                      alt={oppTeamCountry}
                       style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}
                       onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%23ddd' width='40' height='40'/%3E%3C/svg%3E`; }}
                     />
-                    <div className="team-name">{match.team2_name}</div>
+                    <div className="team-name">{oppTeamName}</div>
                   </div>
                 </div>
+                {opponentUsers.length > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                    {opponentUsers.map((opp) => (
+                      <div key={opp.id} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(26, 115, 232, 0.1)', padding: '0.25rem 0.5rem', borderRadius: '12px' }}>
+                        <img 
+                          src={getUserPhoto(opp.name)}
+                          alt={opp.name}
+                          style={{ width: '20px', height: '20px', borderRadius: '50%', objectFit: 'cover', border: '1px solid white' }}
+                          onError={(e) => { 
+                            e.target.onerror = null; 
+                            e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='12' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${opp.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+                          }}
+                        />
+                        <span style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--primary)' }}>{opp.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div className="date">{formatDate(match.match_date)}</div>
                   <span className={`status status-${match.status}`}>{match.status}</span>
