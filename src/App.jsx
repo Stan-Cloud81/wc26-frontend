@@ -10,19 +10,28 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('App mounted');
     const savedUser = localStorage.getItem('wc26_user');
+    console.log('Saved user:', savedUser);
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (err) {
+        console.error('Error parsing saved user:', err);
+        localStorage.removeItem('wc26_user');
+      }
     }
     setLoading(false);
   }, []);
 
   const login = (userData) => {
+    console.log('Login with user:', userData);
     setUser(userData);
     localStorage.setItem('wc26_user', JSON.stringify(userData));
   };
 
   const logout = () => {
+    console.log('Logout');
     setUser(null);
     localStorage.removeItem('wc26_user');
   };
@@ -30,6 +39,8 @@ function App() {
   if (loading) {
     return <div className="loading">Loading...</div>;
   }
+
+  console.log('Current user:', user);
 
   return (
     <BrowserRouter>
