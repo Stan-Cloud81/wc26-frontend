@@ -3,14 +3,18 @@ import { useState, useEffect } from 'react';
 import api from './utils/api';
 import { clearAuthToken } from './utils/auth';
 import { subscribeToPushNotifications } from './utils/notifications';
+import { showToast } from './utils/toast';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Family from './pages/Family';
 import Header from './components/Header';
 
+const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE === 'true';
+
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
     console.log('App mounted');
@@ -25,6 +29,58 @@ function App() {
       }
     }
     setLoading(false);
+
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      if (DEBUG_MODE) {
+        console.log('beforeinstallprompt event fired');
+        showToast('App can be installed', 'info');
+      }
+    };
+
+    const handleAppInstalled = () => {
+      if (DEBUG_MODE) {
+        console.log('App was installed');
+        showToast('App installed successfully!', 'success');
+      }
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(() => {
+        if (DEBUG_MODE) {
+          console.log('Service Worker is ready');
+        }
+      }).catch((err) => {
+        if (DEBUG_MODE) {
+          console.error('Service Worker error:', err);
+          showToast(`Service Worker error: ${err.message}`, 'error');
+        }
+      });
+    }
+
+    window.addEventListener('error', (e) => {
+      if (DEBUG_MODE) {
+        console.error('Global error:', e.error);
+        showToast(`Error: ${e.error?.message || 'Unknown error'}`, 'error');
+      }
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+      if (DEBUG_MODE) {
+        console.error('Unhandled promise rejection:', e.reason);
+        showToast(`Promise error: ${e.reason?.message || 'Unknown error'}`, 'error');
+      }
+    });
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
   }, []);
 
   const login = async (userData) => {
