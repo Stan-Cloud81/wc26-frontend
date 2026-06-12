@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { API_URL } from '../config';
+import api from '../utils/api';
 
 function Home({ user }) {
   const [matches, setMatches] = useState([]);
@@ -47,8 +46,8 @@ function Home({ user }) {
   const fetchData = async () => {
     try {
       const [matchesRes, usersRes] = await Promise.all([
-        axios.get(`${API_URL}/matches?userId=${user.id}`),
-        axios.get(`${API_URL}/users`)
+        api.get(`/matches?userId=${user.id}`),
+        api.get(`/users`)
       ]);
       
       setMatches(Array.isArray(matchesRes.data) ? matchesRes.data : []);

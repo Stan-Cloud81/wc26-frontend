@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { API_URL } from '../config';
+import api from '../utils/api';
+import { hashPassword, setAuthToken, getAuthToken, clearAuthToken } from '../utils/auth';
 
 function Login({ onLogin }) {
   const [step, setStep] = useState('password'); // 'password' or 'user-selection'
@@ -15,10 +15,8 @@ function Login({ onLogin }) {
   };
 
   useEffect(() => {
-    // Check if password was previously verified
-    const savedAuth = localStorage.getItem('wc26_auth');
-    if (savedAuth) {
-      // Password already verified, fetch users directly
+    const token = getAuthToken();
+    if (token) {
       fetchUsers();
     }
   }, []);
@@ -26,17 +24,13 @@ function Login({ onLogin }) {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const savedPassword = localStorage.getItem('wc26_auth');
-      const response = await axios.post(`${API_URL}/auth/login`, { 
-        password: savedPassword 
-      });
+      const response = await api.post('/auth/login', { password: '' });
       if (response.data.users && response.data.users.length > 0) {
         setUsers(response.data.users);
         setStep('user-selection');
       }
     } catch (err) {
-      // If saved password fails, clear it and show password form
-      localStorage.removeItem('wc26_auth');
+      clearAuthToken();
       setStep('password');
       setError('Session expired. Please login again.');
     } finally {
@@ -50,16 +44,18 @@ function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, { password });
+      const token = await hashPassword(password);
+      setAuthToken(token);
+      
+      const response = await api.post('/auth/login', { password });
       if (response.data.users && response.data.users.length > 0) {
-        // Save password to localStorage
-        localStorage.setItem('wc26_auth', password);
         setUsers(response.data.users);
         setStep('user-selection');
       } else {
         setError('No users found');
       }
     } catch (err) {
+      clearAuthToken();
       setError(err.response?.data?.error || 'Login failed');
     } finally {
       setLoading(false);
@@ -70,7 +66,7 @@ function Login({ onLogin }) {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.post(`${API_URL}/auth/select`, { 
+      const response = await api.post('/auth/select', { 
         user_id: user.id 
       });
       if (response.data.success) {

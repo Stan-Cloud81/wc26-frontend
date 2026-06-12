@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { API_URL } from '../config';
+import api from '../utils/api';
 
 function Family({ user }) {
   const [users, setUsers] = useState([]);
@@ -43,7 +42,7 @@ function Family({ user }) {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${API_URL}/users`);
+      const response = await api.get(`/users`);
       setUsers(Array.isArray(response.data) ? response.data : []);
       setError('');
     } catch (err) {

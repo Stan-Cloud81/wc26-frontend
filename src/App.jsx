@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { API_URL } from './config';
+import api from './utils/api';
+import { clearAuthToken } from './utils/auth';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Family from './pages/Family';
@@ -36,13 +36,14 @@ function App() {
     console.log('Logout');
     if (user) {
       try {
-        await axios.post(`${API_URL}/auth/logout`, { user_id: user.id });
+        await api.post(`/auth/logout`, { user_id: user.id });
       } catch (err) {
         console.error('Logout error:', err);
       }
     }
     setUser(null);
     localStorage.removeItem('wc26_user');
+    clearAuthToken();
   };
 
   if (loading) {
