@@ -89,38 +89,11 @@ body {
   z-index: 100;
 }
 
-.header-content {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 0.75rem;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--primary);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.user-name-header {
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--text-primary);
-}
-
 .nav {
   display: flex;
   justify-content: space-around;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .nav-item {

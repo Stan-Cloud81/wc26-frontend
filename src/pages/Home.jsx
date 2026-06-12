@@ -29,6 +29,11 @@ function Home({ user }) {
     return `https://flagcdn.com/w80/${code}.png`;
   };
 
+  const getUserPhoto = (name) => {
+    const fileName = name.toLowerCase().replace(/\s+/g, '-');
+    return `/users/${fileName}.png`;
+  };
+
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 60000);
@@ -74,7 +79,18 @@ function Home({ user }) {
       {error && <div className="error">{error}</div>}
       
       <div className="my-team">
-        <h3>👤 {user.name}'s Teams</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+          <img 
+            src={getUserPhoto(user.name)}
+            alt={user.name}
+            style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--primary)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
+            onError={(e) => { 
+              e.target.onerror = null; 
+              e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='22' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+            }}
+          />
+          <h3 style={{ margin: 0 }}>{user.name}'s Teams</h3>
+        </div>
         <div className="team-flags">
           {teams.team1 && (
             <div className="flag-container">
