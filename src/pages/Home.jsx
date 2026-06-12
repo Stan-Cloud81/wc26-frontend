@@ -34,6 +34,10 @@ function Home({ user }) {
     return `/users/${fileName}.png`;
   };
 
+  const getFlagBorderColor = (isTopTeam) => {
+    return isTopTeam ? '#FFD700' : '#C0C0C0';
+  };
+
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 60000);
@@ -91,7 +95,7 @@ function Home({ user }) {
         <div className="team-flags">
           {teams.team1 && (
             <div className="flag-container">
-              <div className="flag-circle">
+              <div className="flag-circle" style={{ border: `3px solid ${getFlagBorderColor(teams.team1.is_top)}` }}>
                 <img 
                   src={getFlagUrl(teams.team1.country)}
                   alt={teams.team1.country}
@@ -104,7 +108,7 @@ function Home({ user }) {
           )}
           {teams.team2 && (
             <div className="flag-container">
-              <div className="flag-circle">
+              <div className="flag-circle" style={{ border: `3px solid ${getFlagBorderColor(teams.team2.is_top)}` }}>
                 <img 
                   src={getFlagUrl(teams.team2.country)}
                   alt={teams.team2.country}
@@ -132,11 +136,13 @@ function Home({ user }) {
           const myTeamId = myTeam === 'team1' ? match.team1_id : match.team2_id;
           const myTeamName = myTeam === 'team1' ? match.team1_name : match.team2_name;
           const myTeamCountry = myTeam === 'team1' ? match.team1_country : match.team2_country;
+          const myTeamIsTop = myTeam === 'team1' ? match.team1_is_top : match.team2_is_top;
           const myScore = myTeam === 'team1' ? match.score1 : match.score2;
           
           const oppTeamId = opponentTeam === 'team1' ? match.team1_id : match.team2_id;
           const oppTeamName = opponentTeam === 'team1' ? match.team1_name : match.team2_name;
           const oppTeamCountry = opponentTeam === 'team1' ? match.team1_country : match.team2_country;
+          const oppTeamIsTop = opponentTeam === 'team1' ? match.team1_is_top : match.team2_is_top;
           const oppScore = opponentTeam === 'team1' ? match.score1 : match.score2;
 
           return (
@@ -169,7 +175,7 @@ function Home({ user }) {
                     <img 
                       src={getFlagUrl(myTeamCountry)}
                       alt={myTeamCountry}
-                      style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}
+                      style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${getFlagBorderColor(myTeamIsTop)}`, boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}
                       onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%23ddd' width='40' height='40'/%3E%3C/svg%3E`; }}
                     />
                     <div className="team-name">{myTeamName}</div>
@@ -184,7 +190,7 @@ function Home({ user }) {
                     <img 
                       src={getFlagUrl(oppTeamCountry)}
                       alt={oppTeamCountry}
-                      style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}
+                      style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: `3px solid ${getFlagBorderColor(oppTeamIsTop)}`, boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}
                       onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%23ddd' width='40' height='40'/%3E%3C/svg%3E`; }}
                     />
                     <div className="team-name">{oppTeamName}</div>

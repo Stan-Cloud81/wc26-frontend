@@ -256,7 +256,6 @@ h1, h2, h3 {
   height: 80px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
