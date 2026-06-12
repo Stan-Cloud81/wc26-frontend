@@ -42,7 +42,7 @@ function Home({ user }) {
         axios.get(`${API_URL}/users/${user.id}`)
       ]);
       
-      setMatches(matchesRes.data.matches || []);
+      setMatches(Array.isArray(matchesRes.data) ? matchesRes.data : []);
       setTeams(userRes.data.teams || {});
       setError('');
     } catch (err) {
