@@ -89,11 +89,13 @@ function Home({ user }) {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
+    const utcDate = new Date(date.getTime() + (4 * 60 * 60 * 1000));
+    return utcDate.toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
     });
   };
 
