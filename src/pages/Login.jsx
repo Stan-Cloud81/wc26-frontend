@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
 
@@ -9,6 +9,36 @@ function Login({ onLogin }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    // Check if password was previously verified
+    const savedAuth = localStorage.getItem('wc26_auth');
+    if (savedAuth) {
+      // Password already verified, fetch users directly
+      fetchUsers();
+    }
+  }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const savedPassword = localStorage.getItem('wc26_auth');
+      const response = await axios.post(`${API_URL}/auth/login`, { 
+        password: savedPassword 
+      });
+      if (response.data.users && response.data.users.length > 0) {
+        setUsers(response.data.users);
+        setStep('user-selection');
+      }
+    } catch (err) {
+      // If saved password fails, clear it and show password form
+      localStorage.removeItem('wc26_auth');
+      setStep('password');
+      setError('Session expired. Please login again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -17,6 +47,8 @@ function Login({ onLogin }) {
     try {
       const response = await axios.post(`${API_URL}/auth/login`, { password });
       if (response.data.users && response.data.users.length > 0) {
+        // Save password to localStorage
+        localStorage.setItem('wc26_auth', password);
         setUsers(response.data.users);
         setStep('user-selection');
       } else {
@@ -33,6 +65,10 @@ function Login({ onLogin }) {
     onLogin(user);
   };
 
+  if (loading && step === 'password') {
+    return <div className="loading">Loading...</div>;
+  }
+
   if (step === 'user-selection') {
     return (
       <div className="container">
@@ -42,18 +78,22 @@ function Login({ onLogin }) {
             Choose your name from the list
           </p>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {users.map((user) => (
-              <button
-                key={user.id}
-                onClick={() => handleUserSelect(user)}
-                className="btn btn-primary"
-                style={{ textAlign: 'left' }}
-              >
-                {user.name}
-              </button>
-            ))}
-          </div>
+          {loading ? (
+            <div className="loading">Loading users...</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {users.map((user) => (
+                <button
+                  key={user.id}
+                  onClick={() => handleUserSelect(user)}
+                  className="btn btn-primary"
+                  style={{ textAlign: 'left' }}
+                >
+                  {user.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );
