@@ -143,11 +143,29 @@ function Home({ user }) {
             <div 
               key={match.id} 
               className="match-card"
-              style={{ border: '2px solid var(--primary)' }}
+              style={{ border: '2px solid var(--primary)', position: 'relative' }}
             >
+              {opponentUsers.length > 0 && (
+                <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
+                  {opponentUsers.map((opp) => (
+                    <div key={opp.id} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(26, 115, 232, 0.1)', padding: '0.25rem 0.5rem', borderRadius: '12px' }}>
+                      <img 
+                        src={getUserPhoto(opp.name)}
+                        alt={opp.name}
+                        style={{ width: '20px', height: '20px', borderRadius: '50%', objectFit: 'cover', border: '1px solid white' }}
+                        onError={(e) => { 
+                          e.target.onerror = null; 
+                          e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='12' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${opp.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+                        }}
+                      />
+                      <span style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--primary)' }}>{opp.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               <div style={{ width: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                  <div className="team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <div className="team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                     <img 
                       src={getFlagUrl(myTeamCountry)}
                       alt={myTeamCountry}
@@ -156,13 +174,13 @@ function Home({ user }) {
                     />
                     <div className="team-name">{myTeamName}</div>
                   </div>
-                  <div className="score" style={{ padding: '0 1rem' }}>
+                  <div className="score">
                     {match.status === 'finished' ? 
                       `${myScore} - ${oppScore}` : 
                       'vs'
                     }
                   </div>
-                  <div className="team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                  <div className="team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                     <img 
                       src={getFlagUrl(oppTeamCountry)}
                       alt={oppTeamCountry}
@@ -170,24 +188,6 @@ function Home({ user }) {
                       onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%23ddd' width='40' height='40'/%3E%3C/svg%3E`; }}
                     />
                     <div className="team-name">{oppTeamName}</div>
-                    {opponentUsers.length > 0 && (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem', marginTop: '0.25rem' }}>
-                        {opponentUsers.map((opp) => (
-                          <div key={opp.id} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(26, 115, 232, 0.1)', padding: '0.25rem 0.5rem', borderRadius: '12px' }}>
-                            <img 
-                              src={getUserPhoto(opp.name)}
-                              alt={opp.name}
-                              style={{ width: '20px', height: '20px', borderRadius: '50%', objectFit: 'cover', border: '1px solid white' }}
-                              onError={(e) => { 
-                                e.target.onerror = null; 
-                                e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='12' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${opp.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
-                              }}
-                            />
-                            <span style={{ fontSize: '0.75rem', fontWeight: '500', color: 'var(--primary)' }}>{opp.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
