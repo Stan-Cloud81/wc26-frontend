@@ -255,7 +255,6 @@ h1, h2, h3 {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
@@ -263,6 +262,7 @@ h1, h2, h3 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .flag-number {
@@ -281,6 +281,7 @@ h1, h2, h3 {
   font-size: 0.9rem;
   border: 2px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
 .team-name-flag {
