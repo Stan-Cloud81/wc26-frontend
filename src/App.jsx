@@ -4,7 +4,6 @@ import axios from 'axios';
 import { API_URL } from './config';
 import Login from './pages/Login';
 import Home from './pages/Home';
-import Leaderboard from './pages/Leaderboard';
 import Family from './pages/Family';
 import Header from './components/Header';
 
@@ -63,10 +62,6 @@ function App() {
         <Route 
           path="/" 
           element={user ? <Home user={user} /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/leaderboard" 
-          element={user ? <Leaderboard user={user} /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/family" 

@@ -10,9 +10,6 @@ function Header({ user, onLogout }) {
         <NavLink to="/family" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
           Family
         </NavLink>
-        <NavLink to="/leaderboard" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-          Leaderboard
-        </NavLink>
         <button onClick={onLogout} className="nav-item" style={{border: 'none', background: 'none', cursor: 'pointer'}}>
           Logout
         </button>
