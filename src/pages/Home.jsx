@@ -120,7 +120,13 @@ function Home({ user }) {
             >
               <div style={{ width: '100%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <div className="team">
+                  <div className="team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                    <img 
+                      src={getFlagUrl(match.team1_country)}
+                      alt={match.team1_country}
+                      style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}
+                      onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%23ddd' width='40' height='40'/%3E%3C/svg%3E`; }}
+                    />
                     <div className="team-name">{match.team1_name}</div>
                   </div>
                   <div className="score">
@@ -129,7 +135,13 @@ function Home({ user }) {
                       'vs'
                     }
                   </div>
-                  <div className="team">
+                  <div className="team" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                    <img 
+                      src={getFlagUrl(match.team2_country)}
+                      alt={match.team2_country}
+                      style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid white', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }}
+                      onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect fill='%23ddd' width='40' height='40'/%3E%3C/svg%3E`; }}
+                    />
                     <div className="team-name">{match.team2_name}</div>
                   </div>
                 </div>
