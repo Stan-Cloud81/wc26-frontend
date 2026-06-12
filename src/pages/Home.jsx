@@ -63,6 +63,9 @@ function Home({ user }) {
   };
 
   const userTeamIds = [teams.team1?.id, teams.team2?.id].filter(Boolean);
+  const myMatches = matches.filter(match => 
+    userTeamIds.includes(match.team1_id) || userTeamIds.includes(match.team2_id)
+  );
 
   if (loading) return <div className="loading">Loading...</div>;
 
@@ -102,20 +105,18 @@ function Home({ user }) {
         </div>
       </div>
 
-      <h2>Matches</h2>
-      {matches.length === 0 ? (
+      <h2>My Matches</h2>
+      {myMatches.length === 0 ? (
         <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
           No matches available yet
         </p>
       ) : (
-        matches.map((match) => {
-          const isMyMatch = userTeamIds.includes(match.team1_id) || userTeamIds.includes(match.team2_id);
-          
+        myMatches.map((match) => {
           return (
             <div 
               key={match.id} 
               className="match-card"
-              style={isMyMatch ? { border: '2px solid var(--primary)' } : {}}
+              style={{ border: '2px solid var(--primary)' }}
             >
               <div style={{ width: '100%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
