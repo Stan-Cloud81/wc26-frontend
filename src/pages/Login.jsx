@@ -9,6 +9,11 @@ function Login({ onLogin }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const getUserPhoto = (name) => {
+    const fileName = name.toLowerCase().replace(/\s+/g, '-');
+    return `/users/${fileName}.png`;
+  };
+
   useEffect(() => {
     // Check if password was previously verified
     const savedAuth = localStorage.getItem('wc26_auth');
@@ -93,16 +98,24 @@ function Login({ onLogin }) {
           {loading ? (
             <div className="loading">Loading users...</div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div className="user-grid">
               {users.map((user) => (
-                <button
+                <div
                   key={user.id}
                   onClick={() => handleUserSelect(user)}
-                  className="btn btn-primary"
-                  style={{ textAlign: 'left' }}
+                  className="user-grid-item"
                 >
-                  {user.name}
-                </button>
+                  <img 
+                    src={getUserPhoto(user.name)}
+                    alt={user.name}
+                    className="user-grid-photo"
+                    onError={(e) => { 
+                      e.target.onerror = null; 
+                      e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Ccircle cx='40' cy='40' r='40' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='36' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+                    }}
+                  />
+                  <div className="user-grid-name">{user.name}</div>
+                </div>
               ))}
             </div>
           )}

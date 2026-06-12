@@ -34,7 +34,7 @@ function Family({ user }) {
   };
 
   const getFlagBorderColor = (isTopTeam) => {
-    return isTopTeam ? '#FFD700' : '#C0C0C0';
+    return isTopTeam ? 'var(--gold)' : 'var(--silver)';
   };
 
   useEffect(() => {

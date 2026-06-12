@@ -5,15 +5,19 @@
 }
 
 :root {
-  --primary: #1a73e8;
-  --primary-dark: #1557b0;
-  --secondary: #34a853;
-  --danger: #ea4335;
-  --background: #f5f5f5;
+  --primary: #00A651;
+  --primary-dark: #008a44;
+  --secondary: #FF6B35;
+  --accent: #FFC300;
+  --danger: #E63946;
+  --background: linear-gradient(135deg, #00A651 0%, #006837 100%);
   --surface: #ffffff;
-  --text-primary: #202124;
-  --text-secondary: #5f6368;
-  --border: #dadce0;
+  --surface-secondary: #f8f9fa;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6c757d;
+  --border: #dee2e6;
+  --gold: #FFD700;
+  --silver: #C0C0C0;
 }
 
 body {
@@ -22,7 +26,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background);
+  background: var(--background);
+  background-attachment: fixed;
   color: var(--text-primary);
 }
 
@@ -38,32 +43,47 @@ body {
 
 .card {
   background: var(--surface);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .btn {
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   width: 100%;
   margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary {
-  background-color: var(--primary);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
 }
 
 .btn-primary:active {
-  background-color: var(--primary-dark);
-  transform: scale(0.98);
+  transform: scale(0.96);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
 }
 
 .input {
@@ -81,12 +101,13 @@ body {
 }
 
 .header {
-  background: var(--surface);
+  background: linear-gradient(135deg, #00A651 0%, #008a44 100%);
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 3px solid var(--accent);
 }
 
 .nav {
@@ -99,14 +120,26 @@ body {
 .nav-item {
   padding: 0.5rem 1rem;
   text-decoration: none;
-  color: var(--text-secondary);
-  font-weight: 500;
-  border-bottom: 2px solid transparent;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.nav-item:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px 8px 0 0;
 }
 
 .nav-item.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+  color: white;
+  border-bottom-color: var(--accent);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px 8px 0 0;
 }
 
 .match-card {
@@ -115,9 +148,16 @@ body {
   align-items: center;
   padding: 1rem;
   background: var(--surface);
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 0.75rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+  border-left: 4px solid var(--primary);
+}
+
+.match-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }
 
 .team {
@@ -131,9 +171,11 @@ body {
 }
 
 .score {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.8rem;
+  font-weight: 800;
   padding: 0 1rem;
+  color: var(--primary);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .date {
@@ -144,26 +186,34 @@ body {
 
 .status {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .status-scheduled {
-  background: #e8f0fe;
-  color: var(--primary);
+  background: linear-gradient(135deg, #FFC300 0%, #FFB000 100%);
+  color: #1a1a1a;
 }
 
 .status-live {
-  background: #fce8e6;
-  color: var(--danger);
+  background: linear-gradient(135deg, #E63946 0%, #d62828 100%);
+  color: white;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 .status-finished {
-  background: #e6f4ea;
-  color: var(--secondary);
+  background: linear-gradient(135deg, #00A651 0%, #008a44 100%);
+  color: white;
 }
 
 .leaderboard-item {
@@ -221,18 +271,47 @@ body {
 
 h1, h2, h3 {
   margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
 }
 
 .my-team {
-  background: #e8f0fe;
-  padding: 1rem;
-  border-radius: 8px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
   margin-bottom: 1rem;
+  border: 3px solid var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 166, 81, 0.3);
 }
 
 .my-team h3 {
   color: var(--primary);
   margin-bottom: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .team-flags {
@@ -255,7 +334,13 @@ h1, h2, h3 {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.flag-circle:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
 .flag-circle img {
@@ -269,26 +354,26 @@ h1, h2, h3 {
   position: absolute;
   bottom: -5px;
   right: -5px;
-  width: 28px;
-  height: 28px;
-  background: var(--primary);
-  color: white;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--accent) 0%, #FFB000 100%);
+  color: #1a1a1a;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-weight: 800;
+  font-size: 1rem;
+  border: 3px solid white;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
   z-index: 10;
 }
 
 .team-name-flag {
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.9rem;
   text-align: center;
-  color: var(--text-primary);
+  color: #1a1a1a;
   max-width: 100px;
 }
 
@@ -306,6 +391,57 @@ h1, h2, h3 {
   font-size: 0.9rem;
 }
 
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+.user-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--surface-secondary);
+}
+
+.user-grid-item:hover {
+  transform: translateY(-5px) scale(1.05);
+  background: white;
+  box-shadow: 0 6px 16px rgba(0, 166, 81, 0.25);
+}
+
+.user-grid-item:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.user-grid-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.user-grid-item:hover .user-grid-photo {
+  border-color: var(--accent);
+  box-shadow: 0 6px 16px rgba(255, 195, 0, 0.4);
+}
+
+.user-grid-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--text-primary);
+}
+
 @media (max-width: 640px) {
   .container {
     padding: 0.75rem;
@@ -313,5 +449,15 @@ h1, h2, h3 {
   
   .card {
     padding: 1rem;
+  }
+  
+  .user-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 1rem;
+  }
+  
+  .user-grid-photo {
+    width: 70px;
+    height: 70px;
   }
 }
