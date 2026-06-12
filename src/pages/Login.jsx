@@ -24,10 +24,13 @@ function Login({ onLogin }) {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await api.post('/auth/login', { password: '' });
-      if (response.data.users && response.data.users.length > 0) {
-        setUsers(response.data.users);
+      const response = await api.get('/users');
+      const availableUsers = response.data.filter(u => !u.is_selected);
+      if (availableUsers.length > 0) {
+        setUsers(availableUsers);
         setStep('user-selection');
+      } else {
+        setError('No available users');
       }
     } catch (err) {
       clearAuthToken();
