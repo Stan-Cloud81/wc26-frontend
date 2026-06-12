@@ -235,6 +235,63 @@ h1, h2, h3 {
   margin-bottom: 0.5rem;
 }
 
+.team-flags {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.flag-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.flag-circle {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.flag-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.flag-number {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  width: 28px;
+  height: 28px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.team-name-flag {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--text-primary);
+  max-width: 100px;
+}
+
 .team-list {
   display: flex;
   gap: 0.5rem;

@@ -51,9 +51,33 @@ function Home({ user }) {
       
       <div className="my-team">
         <h3>👤 {user.name}'s Teams</h3>
-        <div className="team-list">
-          {teams.team1 && <div className="team-badge">⭐ {teams.team1.name}</div>}
-          {teams.team2 && <div className="team-badge">🎯 {teams.team2.name}</div>}
+        <div className="team-flags">
+          {teams.team1 && (
+            <div className="flag-container">
+              <div className="flag-circle">
+                <img 
+                  src={`https://flagcdn.com/w80/${teams.team1.country.toLowerCase().replace(/ /g, '-')}.png`}
+                  alt={teams.team1.country}
+                  onError={(e) => { e.target.src = 'https://via.placeholder.com/80?text=1'; }}
+                />
+                <div className="flag-number">1</div>
+              </div>
+              <div className="team-name-flag">{teams.team1.name}</div>
+            </div>
+          )}
+          {teams.team2 && (
+            <div className="flag-container">
+              <div className="flag-circle">
+                <img 
+                  src={`https://flagcdn.com/w80/${teams.team2.country.toLowerCase().replace(/ /g, '-')}.png`}
+                  alt={teams.team2.country}
+                  onError={(e) => { e.target.src = 'https://via.placeholder.com/80?text=2'; }}
+                />
+                <div className="flag-number">2</div>
+              </div>
+              <div className="team-name-flag">{teams.team2.name}</div>
+            </div>
+          )}
         </div>
       </div>
 
