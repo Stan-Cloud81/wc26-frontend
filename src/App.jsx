@@ -131,9 +131,9 @@ function AppRoutes({ user, login, logout }) {
   const location = useLocation();
 
   return (
-    <>
+    <div key={location.pathname}>
       {user && <Header user={user} onLogout={logout} />}
-      <Routes location={location} key={location.pathname}>
+      <Routes>
         <Route 
           path="/login" 
           element={!user ? <Login onLogin={login} /> : <Navigate to="/" />} 
@@ -147,7 +147,7 @@ function AppRoutes({ user, login, logout }) {
           element={user ? <Family user={user} /> : <Navigate to="/login" />} 
         />
       </Routes>
-    </>
+    </div>
   );
 }
 
