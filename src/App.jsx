@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from './utils/api';
 import { clearAuthToken } from './utils/auth';
@@ -122,8 +122,18 @@ function App() {
 
   return (
     <BrowserRouter>
+      <AppRoutes user={user} login={login} logout={logout} />
+    </BrowserRouter>
+  );
+}
+
+function AppRoutes({ user, login, logout }) {
+  const location = useLocation();
+
+  return (
+    <>
       {user && <Header user={user} onLogout={logout} />}
-      <Routes>
+      <Routes location={location} key={location.pathname}>
         <Route 
           path="/login" 
           element={!user ? <Login onLogin={login} /> : <Navigate to="/" />} 
@@ -137,7 +147,7 @@ function App() {
           element={user ? <Family user={user} /> : <Navigate to="/login" />} 
         />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 
