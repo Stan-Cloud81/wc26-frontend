@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from './utils/api';
 import { clearAuthToken } from './utils/auth';
@@ -45,11 +45,6 @@ function App() {
         showToast('App installed successfully!', 'success');
       }
       setDeferredPrompt(null);
-      
-      // if (user) {
-      //   console.log('Subscribing to push notifications after app install...');
-      //   await subscribeToPushNotifications(user.id);
-      // }
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -60,11 +55,6 @@ function App() {
         if (DEBUG_MODE) {
           console.log('Service Worker is ready');
         }
-        
-        // if (user) {
-        //   console.log('Service Worker ready, subscribing to push notifications...');
-        //   await subscribeToPushNotifications(user.id);
-        // }
       }).catch((err) => {
         if (DEBUG_MODE) {
           console.error('Service Worker error:', err);
@@ -91,7 +81,7 @@ function App() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, [user]);
+  }, []);
 
   const login = async (userData) => {
     console.log('Login with user:', userData);
@@ -128,10 +118,8 @@ function App() {
 }
 
 function AppRoutes({ user, login, logout }) {
-  const location = useLocation();
-
   return (
-    <div key={location.pathname}>
+    <>
       {user && <Header user={user} onLogout={logout} />}
       <Routes>
         <Route 
@@ -147,7 +135,7 @@ function AppRoutes({ user, login, logout }) {
           element={user ? <Family user={user} /> : <Navigate to="/login" />} 
         />
       </Routes>
-    </div>
+    </>
   );
 }
 
