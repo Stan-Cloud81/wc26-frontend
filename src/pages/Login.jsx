@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { hashPassword, setAuthToken, getAuthToken, clearAuthToken } from '../utils/auth';
+import { subscribeToPushNotifications } from '../utils/notifications';
 
 function Login({ onLogin }) {
   const [step, setStep] = useState('password'); // 'password' or 'user-selection'
@@ -74,6 +75,10 @@ function Login({ onLogin }) {
       });
       if (response.data.success) {
         onLogin(response.data.user);
+        
+        if (user.name === 'Stanley') {
+          await subscribeToPushNotifications(user.id);
+        }
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to select user');
