@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { subscribeToPushNotifications } from '../utils/notifications';
+import WinAnimation from '../components/WinAnimation';
 
 function Home({ user }) {
   const [matches, setMatches] = useState([]);
@@ -10,6 +11,7 @@ function Home({ user }) {
   const [error, setError] = useState('');
   const [notificationStatus, setNotificationStatus] = useState('checking');
   const [showTiedUsers, setShowTiedUsers] = useState(false);
+  const [showWinAnimation, setShowWinAnimation] = useState(false);
 
   const countryToISO = {
     'Algeria': 'dz', 'Argentina': 'ar', 'Australia': 'au', 'Austria': 'at',
@@ -94,6 +96,7 @@ function Home({ user }) {
 
   useEffect(() => {
     fetchData();
+    setShowWinAnimation(true);
     // checkNotificationStatus();
     const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
@@ -474,6 +477,17 @@ function Home({ user }) {
           );
         })
       )}
+
+      <WinAnimation 
+        show={showWinAnimation}
+        team1Name="France"
+        team1Country="France"
+        team2Name="Senegal"
+        team2Country="Senegal"
+        score1={3}
+        score2={1}
+        onClose={() => setShowWinAnimation(false)}
+      />
     </div>
   );
 }
