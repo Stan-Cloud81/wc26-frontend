@@ -35,42 +35,66 @@ export const requestNotificationPermission = async () => {
 
 export const subscribeToPushNotifications = async (userId) => {
   try {
-    const hasPermission = await requestNotificationPermission();
-    if (!hasPermission) {
-      console.log('Notification permission denied');
+    console.log('[Notifications] Starting subscription for user:', userId);
+    
+    if (!('serviceWorker' in navigator)) {
+      console.error('[Notifications] Service workers not supported');
       return false;
     }
 
+    if (!('PushManager' in window)) {
+      console.error('[Notifications] Push messaging not supported');
+      return false;
+    }
+
+    const hasPermission = await requestNotificationPermission();
+    if (!hasPermission) {
+      console.log('[Notifications] Permission denied');
+      return false;
+    }
+    console.log('[Notifications] Permission granted');
+
+    console.log('[Notifications] Waiting for service worker...');
     const registration = await navigator.serviceWorker.ready;
+    console.log('[Notifications] Service worker ready');
 
     const existingSubscription = await registration.pushManager.getSubscription();
     if (existingSubscription) {
-      console.log('Already subscribed to push notifications');
-      await api.post('/notifications/subscribe', {
+      console.log('[Notifications] Found existing subscription, saving to backend...');
+      const saveResponse = await api.post('/notifications/subscribe', {
         userId,
         subscription: JSON.stringify(existingSubscription)
       });
+      console.log('[Notifications] Save response:', saveResponse.data);
       return true;
     }
 
+    console.log('[Notifications] Fetching VAPID public key...');
     const response = await api.get('/notifications/vapid-public-key');
     const vapidPublicKey = response.data.publicKey;
+    console.log('[Notifications] Got VAPID key:', vapidPublicKey);
+    
     const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 
+    console.log('[Notifications] Creating new subscription...');
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: convertedVapidKey
     });
+    console.log('[Notifications] Subscription created:', subscription);
 
-    await api.post('/notifications/subscribe', {
+    console.log('[Notifications] Saving subscription to backend...');
+    const saveResponse = await api.post('/notifications/subscribe', {
       userId,
       subscription: JSON.stringify(subscription)
     });
+    console.log('[Notifications] Save response:', saveResponse.data);
 
-    console.log('Push notification subscription successful');
+    console.log('[Notifications] Push notification subscription successful!');
     return true;
   } catch (error) {
-    console.error('Failed to subscribe to push notifications:', error);
+    console.error('[Notifications] Failed to subscribe:', error);
+    console.error('[Notifications] Error details:', error.message, error.stack);
     return false;
   }
 };
