@@ -77,10 +77,17 @@ export const subscribeToPushNotifications = async (userId) => {
     const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 
     console.log('[Notifications] Creating new subscription...');
-    const subscription = await registration.pushManager.subscribe({
+    
+    const subscriptionPromise = registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: convertedVapidKey
     });
+    
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Subscription timeout after 10s')), 10000)
+    );
+    
+    const subscription = await Promise.race([subscriptionPromise, timeoutPromise]);
     console.log('[Notifications] Subscription created:', subscription);
 
     console.log('[Notifications] Saving subscription to backend...');
