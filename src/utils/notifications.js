@@ -93,32 +93,16 @@ export const subscribeToPushNotifications = async (userId) => {
     console.log('[Notifications] Converted VAPID key length:', convertedVapidKey.length);
 
     console.log('[Notifications] Creating new subscription...');
-    console.log('[Notifications] This may take up to 30 seconds...');
+    console.log('[Notifications] This may take a while, please wait...');
     
-    let subscription;
-    try {
-      const subscriptionPromise = registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: convertedVapidKey
-      });
-      
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Subscription timeout after 30s')), 30000)
-      );
-      
-      subscription = await Promise.race([subscriptionPromise, timeoutPromise]);
-      console.log('[Notifications] Subscription created:', subscription);
-      console.log('[Notifications] Subscription endpoint:', subscription.endpoint);
-      console.log('[Notifications] Subscription keys:', subscription.keys);
-    } catch (subscribeError) {
-      console.error('[Notifications] Subscribe error:', subscribeError);
-      console.log('[Notifications] Trying without VAPID key as fallback...');
-      
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true
-      });
-      console.log('[Notifications] Subscription created without VAPID:', subscription);
-    }
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: convertedVapidKey
+    });
+    
+    console.log('[Notifications] Subscription created:', subscription);
+    console.log('[Notifications] Subscription endpoint:', subscription.endpoint);
+    console.log('[Notifications] Subscription keys:', subscription.getKey ? 'present' : 'missing');
 
     console.log('[Notifications] Saving subscription to backend...');
     const saveResponse = await api.post('/notifications/subscribe', {
