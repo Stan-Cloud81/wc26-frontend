@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from './utils/api';
 import { clearAuthToken } from './utils/auth';
@@ -119,6 +119,56 @@ function App() {
 }
 
 function AppRoutes({ user, login, logout }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  const minSwipeDistance = 50;
+
+  const pages = ['/', '/family', '/standings'];
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    const currentIndex = pages.indexOf(location.pathname);
+    
+    if (isLeftSwipe && currentIndex < pages.length - 1) {
+      navigate(pages[currentIndex + 1]);
+    }
+    
+    if (isRightSwipe && currentIndex > 0) {
+      navigate(pages[currentIndex - 1]);
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+
+    document.addEventListener('touchstart', onTouchStart);
+    document.addEventListener('touchmove', onTouchMove);
+    document.addEventListener('touchend', onTouchEnd);
+
+    return () => {
+      document.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [touchStart, touchEnd, location.pathname, user]);
+
   return (
     <>
       {user && <Header user={user} onLogout={logout} />}
