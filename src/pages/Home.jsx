@@ -11,7 +11,7 @@ function Home({ user }) {
   const [error, setError] = useState('');
   const [notificationStatus, setNotificationStatus] = useState('checking');
   const [showTiedUsers, setShowTiedUsers] = useState(false);
-  const [showWinAnimation, setShowWinAnimation] = useState(false);
+  const [winAnimationData, setWinAnimationData] = useState(null);
 
   const countryToISO = {
     'Algeria': 'dz', 'Argentina': 'ar', 'Australia': 'au', 'Austria': 'at',
@@ -96,11 +96,39 @@ function Home({ user }) {
 
   useEffect(() => {
     fetchData();
-    setShowWinAnimation(true);
+    checkPendingWinAnimation();
     // checkNotificationStatus();
     const interval = setInterval(fetchData, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  const checkPendingWinAnimation = async () => {
+    try {
+      const response = await api.get(`/win-animation/pending?userId=${user.id}`);
+      if (response.data) {
+        console.log('Win animation data:', response.data);
+        setWinAnimationData(response.data);
+      }
+    } catch (err) {
+      console.error('Failed to check pending win animation:', err);
+    }
+  };
+
+  const handleWinAnimationClose = async () => {
+    if (winAnimationData) {
+      try {
+        await api.post('/win-animation/mark-shown', {
+          user_id: user.id,
+          match_id: winAnimationData.match_id,
+          team_id: winAnimationData.team_id
+        });
+        setWinAnimationData(null);
+      } catch (err) {
+        console.error('Failed to mark animation as shown:', err);
+        setWinAnimationData(null);
+      }
+    }
+  };
 
   // const checkNotificationStatus = () => {
   //   if (!('Notification' in window)) {
@@ -478,16 +506,29 @@ function Home({ user }) {
         })
       )}
 
-      <WinAnimation 
-        show={showWinAnimation}
-        team1Name="France"
-        team1Country="France"
-        team2Name="Senegal"
-        team2Country="Senegal"
-        score1={3}
-        score2={1}
-        onClose={() => setShowWinAnimation(false)}
-      />
+      {winAnimationData && (() => {
+        console.log('Rendering animation with:', {
+          team1Name: winAnimationData.team_name,
+          team1Country: winAnimationData.team_country,
+          score1: winAnimationData.team_score,
+          team2Name: winAnimationData.opponent_name,
+          team2Country: winAnimationData.opponent_country,
+          score2: winAnimationData.opponent_score
+        });
+        return (
+          <WinAnimation 
+            show={!!winAnimationData}
+            team1Name={winAnimationData.team_name}
+            team1Country={winAnimationData.team_country}
+            team2Name={winAnimationData.opponent_name}
+            team2Country={winAnimationData.opponent_country}
+            score1={winAnimationData.team_score}
+            score2={winAnimationData.opponent_score}
+            opponentUsers={winAnimationData.opponent_users}
+            onClose={handleWinAnimationClose}
+          />
+        );
+      })()}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function WinAnimation({ show, team1Name, team1Country, team2Name, team2Country, score1, score2, onClose }) {
+function WinAnimation({ show, team1Name, team1Country, team2Name, team2Country, score1, score2, opponentUsers, onClose }) {
   const [visible, setVisible] = useState(false);
   const [countdown, setCountdown] = useState(5);
 
@@ -52,6 +52,15 @@ function WinAnimation({ show, team1Name, team1Country, team2Name, team2Country, 
   const getFlagUrl = (country) => {
     const code = countryToISO[country] || country.toLowerCase().substring(0, 2);
     return `https://flagcdn.com/w320/${code}.png`;
+  };
+
+  const getUserPhoto = (name) => {
+    const fileName = name.toLowerCase().replace(/\s+/g, '-');
+    return `/users/${fileName}.png`;
+  };
+
+  const getUserInitial = (name) => {
+    return name.charAt(0).toUpperCase();
   };
 
   return (
@@ -144,7 +153,8 @@ function WinAnimation({ show, team1Name, team1Country, team2Name, team2Country, 
             justifyContent: 'center',
             alignItems: 'center',
             marginBottom: '1.5rem',
-            gap: '1rem'
+            gap: '1rem',
+            position: 'relative'
           }}
         >
           <div 
@@ -199,7 +209,8 @@ function WinAnimation({ show, team1Name, team1Country, team2Name, team2Country, 
               flexDirection: 'column',
               alignItems: 'center',
               gap: '0.75rem',
-              opacity: 0.5
+              opacity: 0.5,
+              position: 'relative'
             }}
           >
             <img 
@@ -225,6 +236,55 @@ function WinAnimation({ show, team1Name, team1Country, team2Name, team2Country, 
               {team2Name}
             </div>
           </div>
+
+          {opponentUsers && opponentUsers.length > 0 && (
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              gap: '0.25rem', 
+              alignItems: 'center',
+              position: 'absolute',
+              top: '-30px',
+              right: '10px',
+              zIndex: 10
+            }}>
+              {opponentUsers.map((opponent) => (
+                <div key={opponent.user_id} style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.5rem',
+                  background: 'white',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '20px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                }}>
+                  <img 
+                    src={getUserPhoto(opponent.user_name)}
+                    alt={opponent.user_name}
+                    style={{ 
+                      width: '28px', 
+                      height: '28px', 
+                      borderRadius: '50%', 
+                      objectFit: 'cover', 
+                      border: '2px solid #D1D4D1'
+                    }}
+                    onError={(e) => { 
+                      e.target.onerror = null; 
+                      e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='14' fill='%236c757d'/%3E%3Ctext x='50%25' y='50%25' font-size='14' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${getUserInitial(opponent.user_name)}%3C/text%3E%3C/svg%3E`; 
+                    }}
+                  />
+                  <div style={{ 
+                    fontSize: '0.85rem', 
+                    fontWeight: '600', 
+                    color: '#474A4A',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {opponent.user_name}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div 
