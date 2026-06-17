@@ -59,45 +59,48 @@ function Family({ user }) {
       <h2>👨‍👩‍👧‍👦 Family Teams</h2>
       {error && <div className="error">{error}</div>}
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         {users.map((u) => (
           <div 
             key={u.id} 
             className="card"
-            style={u.id === user.id ? { border: '2px solid var(--primary)' } : {}}
+            style={{
+              padding: '0.75rem 1rem',
+              ...(u.id === user.id ? { border: '2px solid var(--primary)' } : {})
+            }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
               <img 
                 src={getUserPhoto(u.name)}
                 alt={u.name}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                style={{ width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
                 onError={(e) => { 
                   e.target.onerror = null; 
-                  e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='18' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${u.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+                  e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='35' height='35'%3E%3Ccircle cx='17.5' cy='17.5' r='17.5' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='16' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${u.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
                 }}
               />
-              <h3 style={{ margin: 0 }}>{u.name}</h3>
+              <h3 style={{ margin: 0, fontSize: '1rem' }}>{u.name}</h3>
             </div>
             
-            <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center' }}>
               {u.team1_name && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                  <div style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '50%', border: `3px solid ${getFlagBorderColor(u.team1_is_top)}`, boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+                  <div style={{ position: 'relative', width: '50px', height: '50px', borderRadius: '50%', border: `3px solid ${getFlagBorderColor(u.team1_is_top)}`, boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
                     <img 
                       src={getFlagUrl(u.team1_country)}
                       alt={u.team1_country}
                       style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-                      onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect fill='%23ddd' width='60' height='60'/%3E%3C/svg%3E`; }}
+                      onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect fill='%23ddd' width='50' height='50'/%3E%3C/svg%3E`; }}
                     />
-                    <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', width: '24px', height: '24px', background: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.8rem', border: '2px solid white', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: '10' }}>
+                    <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', width: '20px', height: '20px', background: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.7rem', border: '2px solid white', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: '10' }}>
                       1
                     </div>
                   </div>
-                  <div style={{ fontWeight: '600', fontSize: '0.8rem', textAlign: 'center', maxWidth: '80px' }}>
+                  <div style={{ fontWeight: '600', fontSize: '0.75rem', textAlign: 'center', maxWidth: '70px' }}>
                     {u.team1_name}
                   </div>
                   {u.team1_stats && (
-                    <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
                       <span style={{ color: 'var(--secondary)' }}>W: {u.team1_stats.wins || 0}</span>
                       <span>D: {u.team1_stats.draws || 0}</span>
                       <span style={{ color: 'var(--danger)' }}>L: {u.team1_stats.losses || 0}</span>
@@ -107,23 +110,23 @@ function Family({ user }) {
               )}
               
               {u.team2_name && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                  <div style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '50%', border: `3px solid ${getFlagBorderColor(u.team2_is_top)}`, boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+                  <div style={{ position: 'relative', width: '50px', height: '50px', borderRadius: '50%', border: `3px solid ${getFlagBorderColor(u.team2_is_top)}`, boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
                     <img 
                       src={getFlagUrl(u.team2_country)}
                       alt={u.team2_country}
                       style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-                      onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Crect fill='%23ddd' width='60' height='60'/%3E%3C/svg%3E`; }}
+                      onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect fill='%23ddd' width='50' height='50'/%3E%3C/svg%3E`; }}
                     />
-                    <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', width: '24px', height: '24px', background: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.8rem', border: '2px solid white', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: '10' }}>
+                    <div style={{ position: 'absolute', bottom: '-5px', right: '-5px', width: '20px', height: '20px', background: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.7rem', border: '2px solid white', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: '10' }}>
                       2
                     </div>
                   </div>
-                  <div style={{ fontWeight: '600', fontSize: '0.8rem', textAlign: 'center', maxWidth: '80px' }}>
+                  <div style={{ fontWeight: '600', fontSize: '0.75rem', textAlign: 'center', maxWidth: '70px' }}>
                     {u.team2_name}
                   </div>
                   {u.team2_stats && (
-                    <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
                       <span style={{ color: 'var(--secondary)' }}>W: {u.team2_stats.wins || 0}</span>
                       <span>D: {u.team2_stats.draws || 0}</span>
                       <span style={{ color: 'var(--danger)' }}>L: {u.team2_stats.losses || 0}</span>
