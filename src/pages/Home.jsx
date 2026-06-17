@@ -5,9 +5,11 @@ import { subscribeToPushNotifications } from '../utils/notifications';
 function Home({ user }) {
   const [matches, setMatches] = useState([]);
   const [teams, setTeams] = useState({});
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notificationStatus, setNotificationStatus] = useState('checking');
+  const [showTiedUsers, setShowTiedUsers] = useState(false);
 
   const countryToISO = {
     'Algeria': 'dz', 'Argentina': 'ar', 'Australia': 'au', 'Austria': 'at',
@@ -37,6 +39,57 @@ function Home({ user }) {
 
   const getFlagBorderColor = (isTopTeam) => {
     return isTopTeam ? 'var(--gold)' : 'var(--silver)';
+  };
+
+  const calculateTotalPoints = (userStats) => {
+    const team1Points = userStats.team1_stats ? (userStats.team1_stats.wins * 3 + userStats.team1_stats.draws) : 0;
+    const team2Points = userStats.team2_stats ? (userStats.team2_stats.wins * 3 + userStats.team2_stats.draws) : 0;
+    return team1Points + team2Points;
+  };
+
+  const getUserRankInfo = () => {
+    const sortedUsers = [...users].sort((a, b) => {
+      const pointsA = calculateTotalPoints(a);
+      const pointsB = calculateTotalPoints(b);
+      return pointsB - pointsA;
+    });
+
+    const currentUserPoints = calculateTotalPoints(users.find(u => u.id === user.id) || {});
+    let rank = 1;
+    const tiedUsers = [];
+    
+    for (let i = 0; i < sortedUsers.length; i++) {
+      if (sortedUsers[i].id === user.id) {
+        for (let j = 0; j < i; j++) {
+          if (calculateTotalPoints(sortedUsers[j]) !== currentUserPoints) {
+            rank = j + 2;
+          }
+        }
+        break;
+      }
+    }
+    
+    for (const u of sortedUsers) {
+      if (calculateTotalPoints(u) === currentUserPoints && u.id !== user.id) {
+        tiedUsers.push(u.name);
+      }
+    }
+    
+    return { rank, tiedUsers };
+  };
+
+  const getRankDisplay = (rank) => {
+    if (rank === 1) return '🥇';
+    if (rank === 2) return '🥈';
+    if (rank === 3) return '🥉';
+    return `#${rank}`;
+  };
+
+  const getRankStyle = (rank) => {
+    if (rank <= 3) {
+      return { fontSize: '2rem', minWidth: '40px' };
+    }
+    return { fontSize: '1.1rem', minWidth: '35px', color: 'var(--primary)' };
   };
 
   useEffect(() => {
@@ -79,9 +132,10 @@ function Home({ user }) {
       
       setMatches(Array.isArray(matchesRes.data) ? matchesRes.data : []);
       
-      const currentUser = Array.isArray(usersRes.data) 
-        ? usersRes.data.find(u => u.id === user.id) 
-        : null;
+      const usersData = Array.isArray(usersRes.data) ? usersRes.data : [];
+      setUsers(usersData);
+      
+      const currentUser = usersData.find(u => u.id === user.id);
       
       if (currentUser) {
         const teamsData = {};
@@ -192,17 +246,82 @@ function Home({ user }) {
           marginBottom: '1.5rem'
         }}
       >
-        <div style={{ padding: '0.75rem 1rem', background: 'var(--card-bg)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <img 
-            src={getUserPhoto(user.name)}
-            alt={user.name}
-            style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
-            onError={(e) => { 
-              e.target.onerror = null; 
-              e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='18' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
-            }}
-          />
-          <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600' }}>{user.name}</h3>
+        <div style={{ padding: '0.75rem 1rem', background: 'var(--card-bg)', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              {users.length > 0 && (() => {
+                const { rank } = getUserRankInfo();
+                const rankStyle = getRankStyle(rank);
+                return <span style={{ fontWeight: '700', ...rankStyle }}>{getRankDisplay(rank)}</span>;
+              })()}
+              <img 
+                src={getUserPhoto(user.name)}
+                alt={user.name}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                onError={(e) => { 
+                  e.target.onerror = null; 
+                  e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='18' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+                }}
+              />
+              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600' }}>{user.name}</h3>
+            </div>
+            {users.length > 0 && (() => {
+              const totalPoints = calculateTotalPoints(users.find(u => u.id === user.id) || {});
+              return (
+                <div style={{ fontWeight: '700', fontSize: '1.2rem', color: 'var(--primary)' }}>
+                  {totalPoints} pts
+                </div>
+              );
+            })()}
+          </div>
+          {users.length > 0 && (() => {
+            const { tiedUsers } = getUserRankInfo();
+            if (tiedUsers.length > 0) {
+              return (
+                <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Tied with:</span>
+                  <div 
+                    style={{ display: 'flex', gap: '0.25rem', cursor: 'pointer' }}
+                    onClick={() => setShowTiedUsers(!showTiedUsers)}
+                  >
+                    {tiedUsers.map((name) => (
+                      <img 
+                        key={name}
+                        src={getUserPhoto(name)}
+                        alt={name}
+                        title={name}
+                        style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--primary)' }}
+                        onError={(e) => { 
+                          e.target.onerror = null; 
+                          e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='12' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+                        }}
+                      />
+                    ))}
+                  </div>
+                  {showTiedUsers && (
+                    <div 
+                      style={{ 
+                        position: 'absolute', 
+                        top: '100%', 
+                        left: '5rem',
+                        marginTop: '0.25rem',
+                        background: 'var(--card-bg)', 
+                        border: '1px solid var(--border)', 
+                        borderRadius: '8px', 
+                        padding: '0.5rem', 
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        zIndex: 10,
+                        fontSize: '0.85rem'
+                      }}
+                    >
+                      {tiedUsers.join(', ')}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return null;
+          })()}
         </div>
 
         <div style={{ display: 'flex', height: '180px' }}>
