@@ -27,7 +27,7 @@ function Home({ user }) {
 
   const getFlagUrl = (country) => {
     const code = countryToISO[country] || country.toLowerCase().substring(0, 2);
-    return `https://flagcdn.com/w80/${code}.png`;
+    return `https://flagcdn.com/w320/${code}.png`;
   };
 
   const getUserPhoto = (name) => {
@@ -180,58 +180,93 @@ function Home({ user }) {
         </div>
       )} */}
       
-      <div className="my-team">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+      <div 
+        className="card"
+        style={{
+          padding: 0,
+          position: 'relative',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          border: '3px solid var(--primary)',
+          marginBottom: '1.5rem'
+        }}
+      >
+        <div style={{ padding: '0.75rem 1rem', background: 'var(--card-bg)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <img 
             src={getUserPhoto(user.name)}
             alt={user.name}
-            style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--primary)', boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
+            style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
             onError={(e) => { 
               e.target.onerror = null; 
-              e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='22' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+              e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='18' text-anchor='middle' dy='.3em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
             }}
           />
-          <h3 style={{ margin: 0 }}>My Teams</h3>
+          <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600' }}>{user.name}</h3>
         </div>
-        <div className="team-flags">
+
+        <div style={{ display: 'flex', height: '180px' }}>
           {teams.team1 && (
-            <div className="flag-container">
-              <div className="flag-circle" style={{ border: `3px solid ${getFlagBorderColor(teams.team1.is_top)}` }}>
-                <img 
-                  src={getFlagUrl(teams.team1.country)}
-                  alt={teams.team1.country}
-                  onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect fill='%23ddd' width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' font-size='24' text-anchor='middle' dy='.3em' fill='%23999'%3E1%3C/text%3E%3C/svg%3E`; }}
-                />
-                <div className="flag-number">1</div>
-              </div>
-              <div className="team-name-flag">{teams.team1.name}</div>
-              {teams.team1.stats && (
-                <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                  <span style={{ color: 'var(--secondary)' }}>W: {teams.team1.stats.wins || 0}</span>
-                  <span>D: {teams.team1.stats.draws || 0}</span>
-                  <span style={{ color: 'var(--danger)' }}>L: {teams.team1.stats.losses || 0}</span>
+            <div style={{ flex: 1, position: 'relative', borderRight: `3px solid ${getFlagBorderColor(teams.team1.is_top)}` }}>
+              <img 
+                src={getFlagUrl(teams.team1.country)}
+                alt={teams.team1.country}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120'%3E%3Crect fill='%23ddd' width='100' height='120'/%3E%3C/svg%3E`; }}
+              />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, transparent 70%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '1rem 0.75rem' }}>
+                <div style={{ fontWeight: '700', fontSize: '0.95rem', color: 'white', marginBottom: '0.5rem', textAlign: 'center', lineHeight: '1.2' }}>
+                  {teams.team1.name}
                 </div>
-              )}
+                {teams.team1.stats && (
+                  <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.85rem', fontWeight: '600' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
+                      <span style={{ color: '#4ade80', fontSize: '1.1rem' }}>{teams.team1.stats.wins || 0}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>W</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
+                      <span style={{ color: '#fbbf24', fontSize: '1.1rem' }}>{teams.team1.stats.draws || 0}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>D</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
+                      <span style={{ color: '#f87171', fontSize: '1.1rem' }}>{teams.team1.stats.losses || 0}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>L</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
+
           {teams.team2 && (
-            <div className="flag-container">
-              <div className="flag-circle" style={{ border: `3px solid ${getFlagBorderColor(teams.team2.is_top)}` }}>
-                <img 
-                  src={getFlagUrl(teams.team2.country)}
-                  alt={teams.team2.country}
-                  onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect fill='%23ddd' width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' font-size='24' text-anchor='middle' dy='.3em' fill='%23999'%3E2%3C/text%3E%3C/svg%3E`; }}
-                />
-                <div className="flag-number">2</div>
-              </div>
-              <div className="team-name-flag">{teams.team2.name}</div>
-              {teams.team2.stats && (
-                <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                  <span style={{ color: 'var(--secondary)' }}>W: {teams.team2.stats.wins || 0}</span>
-                  <span>D: {teams.team2.stats.draws || 0}</span>
-                  <span style={{ color: 'var(--danger)' }}>L: {teams.team2.stats.losses || 0}</span>
+            <div style={{ flex: 1, position: 'relative', borderLeft: `3px solid ${getFlagBorderColor(teams.team2.is_top)}` }}>
+              <img 
+                src={getFlagUrl(teams.team2.country)}
+                alt={teams.team2.country}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120'%3E%3Crect fill='%23ddd' width='100' height='120'/%3E%3C/svg%3E`; }}
+              />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, transparent 70%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '1rem 0.75rem' }}>
+                <div style={{ fontWeight: '700', fontSize: '0.95rem', color: 'white', marginBottom: '0.5rem', textAlign: 'center', lineHeight: '1.2' }}>
+                  {teams.team2.name}
                 </div>
-              )}
+                {teams.team2.stats && (
+                  <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.85rem', fontWeight: '600' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
+                      <span style={{ color: '#4ade80', fontSize: '1.1rem' }}>{teams.team2.stats.wins || 0}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>W</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
+                      <span style={{ color: '#fbbf24', fontSize: '1.1rem' }}>{teams.team2.stats.draws || 0}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>D</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
+                      <span style={{ color: '#f87171', fontSize: '1.1rem' }}>{teams.team2.stats.losses || 0}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>L</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
