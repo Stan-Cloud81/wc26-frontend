@@ -73,10 +73,13 @@ export const subscribeToPushNotifications = async (userId) => {
     const response = await api.get('/notifications/vapid-public-key');
     const vapidPublicKey = response.data.publicKey;
     console.log('[Notifications] Got VAPID key:', vapidPublicKey);
+    console.log('[Notifications] VAPID key length:', vapidPublicKey.length);
     
     const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+    console.log('[Notifications] Converted VAPID key length:', convertedVapidKey.length);
 
     console.log('[Notifications] Creating new subscription...');
+    console.log('[Notifications] This may take up to 30 seconds...');
     
     const subscriptionPromise = registration.pushManager.subscribe({
       userVisibleOnly: true,
@@ -84,7 +87,7 @@ export const subscribeToPushNotifications = async (userId) => {
     });
     
     const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Subscription timeout after 10s')), 10000)
+      setTimeout(() => reject(new Error('Subscription timeout after 30s')), 30000)
     );
     
     const subscription = await Promise.race([subscriptionPromise, timeoutPromise]);
