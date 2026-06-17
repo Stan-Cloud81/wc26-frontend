@@ -90,7 +90,7 @@ function Standings({ user }) {
           <div key={groupName} className="card" style={{ marginBottom: '1.5rem', padding: '1rem' }}>
             <h3 style={{ 
               textAlign: 'center', 
-              background: 'linear-gradient(135deg, #f59e0b, #d97706)', 
+              background: 'linear-gradient(135deg, var(--accent), #1f2d70)', 
               color: 'white', 
               padding: '0.75rem', 
               borderRadius: '8px', 
