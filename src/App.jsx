@@ -89,7 +89,11 @@ function App() {
     setUser(userData);
     localStorage.setItem('wc26_user', JSON.stringify(userData));
     
-    // await subscribeToPushNotifications(userData.id);
+    if (userData.name === 'Stanley') {
+      setTimeout(async () => {
+        await subscribeToPushNotifications(userData.id);
+      }, 1000);
+    }
   };
 
   const logout = async () => {
