@@ -36,6 +36,12 @@ export const requestNotificationPermission = async () => {
 export const subscribeToPushNotifications = async (userId) => {
   try {
     console.log('[Notifications] Starting subscription for user:', userId);
+    console.log('[Notifications] User agent:', navigator.userAgent);
+    console.log('[Notifications] Browser:', {
+      vendor: navigator.vendor,
+      platform: navigator.platform,
+      language: navigator.language
+    });
     
     if (!('serviceWorker' in navigator)) {
       console.error('[Notifications] Service workers not supported');
@@ -45,6 +51,14 @@ export const subscribeToPushNotifications = async (userId) => {
     if (!('PushManager' in window)) {
       console.error('[Notifications] Push messaging not supported');
       return false;
+    }
+    
+    console.log('[Notifications] Checking push manager permissions...');
+    try {
+      const permissionState = await navigator.permissions.query({ name: 'notifications' });
+      console.log('[Notifications] Permission state:', permissionState.state);
+    } catch (e) {
+      console.log('[Notifications] Could not query permission state:', e);
     }
 
     const hasPermission = await requestNotificationPermission();
@@ -81,17 +95,30 @@ export const subscribeToPushNotifications = async (userId) => {
     console.log('[Notifications] Creating new subscription...');
     console.log('[Notifications] This may take up to 30 seconds...');
     
-    const subscriptionPromise = registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: convertedVapidKey
-    });
-    
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Subscription timeout after 30s')), 30000)
-    );
-    
-    const subscription = await Promise.race([subscriptionPromise, timeoutPromise]);
-    console.log('[Notifications] Subscription created:', subscription);
+    let subscription;
+    try {
+      const subscriptionPromise = registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: convertedVapidKey
+      });
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Subscription timeout after 30s')), 30000)
+      );
+      
+      subscription = await Promise.race([subscriptionPromise, timeoutPromise]);
+      console.log('[Notifications] Subscription created:', subscription);
+      console.log('[Notifications] Subscription endpoint:', subscription.endpoint);
+      console.log('[Notifications] Subscription keys:', subscription.keys);
+    } catch (subscribeError) {
+      console.error('[Notifications] Subscribe error:', subscribeError);
+      console.log('[Notifications] Trying without VAPID key as fallback...');
+      
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true
+      });
+      console.log('[Notifications] Subscription created without VAPID:', subscription);
+    }
 
     console.log('[Notifications] Saving subscription to backend...');
     const saveResponse = await api.post('/notifications/subscribe', {
