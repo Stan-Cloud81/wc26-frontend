@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import ErrorWithRetry from '../components/ErrorWithRetry';
+import PointsBreakdown from '../components/PointsBreakdown';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 
 function Leaderboard({ user }) {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchLeaderboard = async () => {
     try {
@@ -70,9 +72,24 @@ function Leaderboard({ user }) {
                 {entry.team1_name} • {entry.team2_name}
               </div>
             </div>
-            <div className="points">{entry.total_points || 0}</div>
+            <div 
+              className="points"
+              style={{ cursor: 'pointer' }}
+              onClick={() => setSelectedUser(entry)}
+              title="Click to see points breakdown"
+            >
+              {entry.total_points || 0}
+            </div>
           </div>
         ))
+      )}
+      
+      {selectedUser && (
+        <PointsBreakdown 
+          userId={selectedUser.user_id}
+          userName={selectedUser.name}
+          onClose={() => setSelectedUser(null)}
+        />
       )}
     </div>
   );

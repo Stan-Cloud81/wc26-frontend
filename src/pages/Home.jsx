@@ -3,6 +3,7 @@ import api from '../utils/api';
 import WinAnimation from '../components/WinAnimation';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import ErrorWithRetry from '../components/ErrorWithRetry';
+import PointsBreakdown from '../components/PointsBreakdown';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 
 function Home({ user }) {
@@ -13,6 +14,7 @@ function Home({ user }) {
   const [error, setError] = useState('');
   const [showTiedUsers, setShowTiedUsers] = useState(false);
   const [winAnimationData, setWinAnimationData] = useState(null);
+  const [showPointsBreakdown, setShowPointsBreakdown] = useState(false);
 
   const countryToISO = {
     'Algeria': 'dz', 'Argentina': 'ar', 'Australia': 'au', 'Austria': 'at',
@@ -316,7 +318,13 @@ function Home({ user }) {
             {users.length > 0 && (() => {
               const totalPoints = calculateTotalPoints(users.find(u => u.id === user.id) || {});
               return (
-                <div style={{ fontWeight: '700', fontSize: '1.2rem', color: 'var(--primary)' }}>
+                <div 
+                  style={{ fontWeight: '700', fontSize: '1.2rem', color: 'var(--primary)', cursor: 'pointer', padding: '0.25rem 0.5rem', borderRadius: '6px', transition: 'background 0.2s' }}
+                  onClick={() => setShowPointsBreakdown(true)}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(60, 172, 59, 0.1)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  title="Click to see points breakdown"
+                >
                   {totalPoints} pts
                 </div>
               );
@@ -543,6 +551,14 @@ function Home({ user }) {
           />
         );
       })()}
+      
+      {showPointsBreakdown && (
+        <PointsBreakdown 
+          userId={user.id}
+          userName={user.name}
+          onClose={() => setShowPointsBreakdown(false)}
+        />
+      )}
     </div>
   );
 }
