@@ -319,13 +319,32 @@ function Home({ user }) {
               const totalPoints = calculateTotalPoints(users.find(u => u.id === user.id) || {});
               return (
                 <div 
-                  style={{ fontWeight: '700', fontSize: '1.2rem', color: 'var(--primary)', cursor: 'pointer', padding: '0.25rem 0.5rem', borderRadius: '6px', transition: 'background 0.2s' }}
+                  style={{ 
+                    fontWeight: '700', 
+                    fontSize: '1.2rem', 
+                    color: 'var(--primary)', 
+                    cursor: 'pointer', 
+                    padding: '0.25rem 0.5rem', 
+                    borderRadius: '6px', 
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    border: '2px dashed var(--primary)'
+                  }}
                   onClick={() => setShowPointsBreakdown(true)}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(60, 172, 59, 0.1)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(60, 172, 59, 0.1)';
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                   title="Click to see points breakdown"
                 >
-                  {totalPoints} pts
+                  <span>{totalPoints} pts</span>
+                  <span style={{ fontSize: '0.9rem' }}>📊</span>
                 </div>
               );
             })()}

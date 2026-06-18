@@ -73,12 +73,11 @@ function Leaderboard({ user }) {
               </div>
             </div>
             <div 
-              className="points"
-              style={{ cursor: 'pointer' }}
+              className="points clickable-points"
               onClick={() => setSelectedUser(entry)}
               title="Click to see points breakdown"
             >
-              {entry.total_points || 0}
+              {entry.total_points || 0} 📊
             </div>
           </div>
         ))

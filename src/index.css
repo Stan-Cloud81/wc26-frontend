@@ -388,6 +388,19 @@ body {
   color: var(--primary);
 }
 
+.clickable-points {
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  border: 2px dashed var(--primary);
+}
+
+.clickable-points:hover {
+  background: rgba(60, 172, 59, 0.1);
+  transform: scale(1.05);
+}
+
 .loading {
   text-align: center;
   padding: 2rem;
