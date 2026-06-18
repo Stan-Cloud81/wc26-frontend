@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
+import LoadingSkeleton from '../components/LoadingSkeleton';
+import ErrorWithRetry from '../components/ErrorWithRetry';
+import usePullToRefresh from '../hooks/usePullToRefresh';
 
 function Family({ user }) {
   const [users, setUsers] = useState([]);
@@ -32,25 +35,23 @@ function Family({ user }) {
     return `/users/${fileName}.png`;
   };
 
-  const getFlagBorderColor = (isTopTeam) => {
-    return isTopTeam ? 'var(--gold)' : 'var(--silver)';
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   const fetchUsers = async () => {
     try {
       const response = await api.get(`/users`);
       setUsers(Array.isArray(response.data) ? response.data : []);
       setError('');
     } catch (err) {
-      setError('Failed to load users');
+      setError(err.response?.data?.message || err.message || 'Failed to load users');
     } finally {
       setLoading(false);
     }
   };
+
+  const { isPulling } = usePullToRefresh(fetchUsers);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const calculateTotalPoints = (userStats) => {
     const team1Points = userStats.team1_stats ? (userStats.team1_stats.wins * 3 + userStats.team1_stats.draws) : 0;
@@ -64,12 +65,26 @@ function Family({ user }) {
     return pointsB - pointsA;
   });
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="container">
+        <h2>👨‍👩‍👧‍👦 Family Teams</h2>
+        <LoadingSkeleton type="user-card" />
+        <LoadingSkeleton type="user-card" />
+        <LoadingSkeleton type="user-card" />
+      </div>
+    );
+  }
 
   return (
     <div className="container">
+      {isPulling && (
+        <div className="pull-to-refresh">
+          <div className="pull-to-refresh-icon">⚽</div>
+        </div>
+      )}
       <h2>👨‍👩‍👧‍👦 Family Teams</h2>
-      {error && <div className="error">{error}</div>}
+      {error && <ErrorWithRetry message={error} onRetry={fetchUsers} />}
       
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         {sortedUsers.map((u, index) => {

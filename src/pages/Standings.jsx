@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
+import ErrorWithRetry from '../components/ErrorWithRetry';
+import usePullToRefresh from '../hooks/usePullToRefresh';
 
-function Standings({ user }) {
+function Standings() {
   const [standings, setStandings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -36,21 +38,23 @@ function Standings({ user }) {
     return name.charAt(0).toUpperCase();
   };
 
-  useEffect(() => {
-    fetchStandings();
-  }, []);
-
   const fetchStandings = async () => {
     try {
       const response = await api.get('/standings');
       setStandings(Array.isArray(response.data) ? response.data : []);
       setError('');
     } catch (err) {
-      setError('Failed to load standings');
+      setError(err.response?.data?.message || err.message || 'Failed to load standings');
     } finally {
       setLoading(false);
     }
   };
+
+  const { isPulling } = usePullToRefresh(fetchStandings);
+
+  useEffect(() => {
+    fetchStandings();
+  }, []);
 
   const groupStandings = standings.reduce((acc, team) => {
     if (!acc[team.pool_name]) {
@@ -74,12 +78,29 @@ function Standings({ user }) {
     allThirdPlaceTeams.slice(0, 8).map(team => team.team_id)
   );
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="container">
+        <h2>🏆 Standings</h2>
+        <div className="card" style={{ padding: '1rem' }}>
+          <div className="skeleton" style={{ height: '40px', marginBottom: '1rem' }} />
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="skeleton" style={{ height: '60px', marginBottom: '0.5rem' }} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
+      {isPulling && (
+        <div className="pull-to-refresh">
+          <div className="pull-to-refresh-icon">⚽</div>
+        </div>
+      )}
       <h2>🏆 Standings</h2>
-      {error && <div className="error">{error}</div>}
+      {error && <ErrorWithRetry message={error} onRetry={fetchStandings} />}
       
       {Object.keys(groupStandings).length === 0 ? (
         <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>

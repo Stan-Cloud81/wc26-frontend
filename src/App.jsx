@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from './utils/api';
-import { clearAuthToken } from './utils/auth';
-import { subscribeToPushNotifications } from './utils/notifications';
 import { showToast } from './utils/toast';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -15,7 +13,7 @@ const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE === 'true';
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
     console.log('App mounted');
@@ -88,12 +86,6 @@ function App() {
     console.log('Login with user:', userData);
     setUser(userData);
     localStorage.setItem('wc26_user', JSON.stringify(userData));
-    
-    if (userData.name === 'Stanley') {
-      setTimeout(async () => {
-        await subscribeToPushNotifications(userData.id);
-      }, 1000);
-    }
   };
 
   const logout = async () => {

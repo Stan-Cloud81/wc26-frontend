@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
-import { subscribeToPushNotifications } from '../utils/notifications';
 import WinAnimation from '../components/WinAnimation';
+import LoadingSkeleton from '../components/LoadingSkeleton';
+import ErrorWithRetry from '../components/ErrorWithRetry';
+import usePullToRefresh from '../hooks/usePullToRefresh';
 
 function Home({ user }) {
   const [matches, setMatches] = useState([]);
@@ -9,7 +11,6 @@ function Home({ user }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [notificationStatus, setNotificationStatus] = useState('checking');
   const [showTiedUsers, setShowTiedUsers] = useState(false);
   const [winAnimationData, setWinAnimationData] = useState(null);
 
@@ -93,14 +94,6 @@ function Home({ user }) {
     }
     return { fontSize: '1.1rem', minWidth: '35px', color: 'var(--primary)' };
   };
-
-  useEffect(() => {
-    fetchData();
-    checkPendingWinAnimation();
-    // checkNotificationStatus();
-    const interval = setInterval(fetchData, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   const checkPendingWinAnimation = async () => {
     try {
@@ -193,11 +186,20 @@ function Home({ user }) {
       
       setError('');
     } catch (err) {
-      setError('Failed to load data');
+      setError(err.response?.data?.message || err.message || 'Failed to load data');
     } finally {
       setLoading(false);
     }
   };
+
+  const { isPulling } = usePullToRefresh(fetchData);
+
+  useEffect(() => {
+    fetchData();
+    checkPendingWinAnimation();
+    const interval = setInterval(fetchData, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -213,11 +215,26 @@ function Home({ user }) {
 
   const myMatches = matches;
 
-  if (loading) return <div className="loading">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="container">
+        <LoadingSkeleton type="user-card" />
+        <h2>My Matches</h2>
+        <LoadingSkeleton type="match" />
+        <LoadingSkeleton type="match" />
+        <LoadingSkeleton type="match" />
+      </div>
+    );
+  }
 
   return (
     <div className="container">
-      {error && <div className="error">{error}</div>}
+      {isPulling && (
+        <div className="pull-to-refresh">
+          <div className="pull-to-refresh-icon">⚽</div>
+        </div>
+      )}
+      {error && <ErrorWithRetry message={error} onRetry={fetchData} />}
       
       {/* {notificationStatus === 'denied' && (
         <div style={{ 
@@ -433,13 +450,10 @@ function Home({ user }) {
           const myTeam = match.user_team;
           const opponentTeam = match.opponent_team;
           
-          const myTeamId = myTeam === 'team1' ? match.team1_id : match.team2_id;
           const myTeamName = myTeam === 'team1' ? match.team1_name : match.team2_name;
           const myTeamCountry = myTeam === 'team1' ? match.team1_country : match.team2_country;
           const myTeamIsTop = myTeam === 'team1' ? match.team1_is_top : match.team2_is_top;
           const myScore = myTeam === 'team1' ? match.score1 : match.score2;
-          
-          const oppTeamId = opponentTeam === 'team1' ? match.team1_id : match.team2_id;
           const oppTeamName = opponentTeam === 'team1' ? match.team1_name : match.team2_name;
           const oppTeamCountry = opponentTeam === 'team1' ? match.team1_country : match.team2_country;
           const oppTeamIsTop = opponentTeam === 'team1' ? match.team1_is_top : match.team2_is_top;
