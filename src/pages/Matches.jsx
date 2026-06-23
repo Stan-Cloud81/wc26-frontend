@@ -6,6 +6,7 @@ import usePullToRefresh from '../hooks/usePullToRefresh';
 
 function Matches() {
   const [matches, setMatches] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('upcoming');
@@ -31,10 +32,25 @@ function Matches() {
     return `https://flagcdn.com/w80/${code}.png`;
   };
 
+  const getUserPhoto = (name) => {
+    const fileName = name.toLowerCase().replace(/\s+/g, '-');
+    return `/users/${fileName}.png`;
+  };
+
+  const getUsersForTeam = (teamName) => {
+    return users.filter(user => 
+      user.team1_name === teamName || user.team2_name === teamName
+    );
+  };
+
   const fetchMatches = async () => {
     try {
-      const response = await api.get('/matches');
-      setMatches(Array.isArray(response.data) ? response.data : []);
+      const [matchesRes, usersRes] = await Promise.all([
+        api.get('/matches'),
+        api.get('/users')
+      ]);
+      setMatches(Array.isArray(matchesRes.data) ? matchesRes.data : []);
+      setUsers(Array.isArray(usersRes.data) ? usersRes.data : []);
       setError('');
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Failed to load matches');
@@ -97,50 +113,93 @@ function Matches() {
   const upcomingByDate = groupMatchesByDate(upcomingMatches);
   const pastByDate = groupMatchesByDate(pastMatches);
 
-  const renderMatch = (match) => (
-    <div key={match.id} className="match-item">
-      <div className="match-time">{formatTime(match.match_date)}</div>
-      <div className="match-content">
-        <div className="match-team">
-          <img 
-            src={getFlagUrl(match.team1_country)} 
-            alt={match.team1_country}
-            className="match-flag"
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
-          <span className="team-name">{match.team1_name}</span>
+  const renderMatch = (match) => {
+    const team1Users = getUsersForTeam(match.team1_name);
+    const team2Users = getUsersForTeam(match.team2_name);
+    
+    return (
+      <div key={match.id} className="match-item">
+        <div className="match-time">{formatTime(match.match_date)}</div>
+        <div className="match-content">
+          <div className="match-team">
+            <img 
+              src={getFlagUrl(match.team1_country)} 
+              alt={match.team1_country}
+              className="match-flag"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+            <div className="team-info">
+              <span className="team-name">{match.team1_name}</span>
+              {team1Users.length > 0 && (
+                <div className="team-users">
+                  {team1Users.map(user => (
+                    <img
+                      key={user.id}
+                      src={getUserPhoto(user.name)}
+                      alt={user.name}
+                      className="user-avatar-tiny"
+                      title={user.name}
+                      onError={(e) => { 
+                        e.target.onerror = null; 
+                        e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='10' text-anchor='middle' dy='.35em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="match-score-section">
+            {match.status === 'finished' ? (
+              <div className="match-score">
+                <span className={match.score1 > match.score2 ? 'winner-score' : ''}>{match.score1}</span>
+                <span> - </span>
+                <span className={match.score2 > match.score1 ? 'winner-score' : ''}>{match.score2}</span>
+              </div>
+            ) : match.status === 'live' ? (
+              <div className="match-status live-status">LIVE 🔴</div>
+            ) : (
+              <div className="match-status">vs</div>
+            )}
+          </div>
+
+          <div className="match-team">
+            <div className="team-info">
+              <span className="team-name">{match.team2_name}</span>
+              {team2Users.length > 0 && (
+                <div className="team-users">
+                  {team2Users.map(user => (
+                    <img
+                      key={user.id}
+                      src={getUserPhoto(user.name)}
+                      alt={user.name}
+                      className="user-avatar-tiny"
+                      title={user.name}
+                      onError={(e) => { 
+                        e.target.onerror = null; 
+                        e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='10' fill='%231a73e8'/%3E%3Ctext x='50%25' y='50%25' font-size='10' text-anchor='middle' dy='.35em' fill='white' font-weight='bold'%3E${user.name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`; 
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            <img 
+              src={getFlagUrl(match.team2_country)} 
+              alt={match.team2_country}
+              className="match-flag"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+          </div>
         </div>
         
-        <div className="match-score-section">
-          {match.status === 'finished' ? (
-            <div className="match-score">
-              <span className={match.score1 > match.score2 ? 'winner-score' : ''}>{match.score1}</span>
-              <span> - </span>
-              <span className={match.score2 > match.score1 ? 'winner-score' : ''}>{match.score2}</span>
-            </div>
-          ) : match.status === 'live' ? (
-            <div className="match-status live-status">LIVE 🔴</div>
-          ) : (
-            <div className="match-status">vs</div>
-          )}
-        </div>
-
-        <div className="match-team">
-          <img 
-            src={getFlagUrl(match.team2_country)} 
-            alt={match.team2_country}
-            className="match-flag"
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
-          <span className="team-name">{match.team2_name}</span>
-        </div>
+        {match.location && (
+          <div className="match-location">📍 {match.location}</div>
+        )}
       </div>
-      
-      {match.location && (
-        <div className="match-location">📍 {match.location}</div>
-      )}
-    </div>
-  );
+    );
+  };
 
   const renderMatchesByDate = (matchesByDate) => {
     const sortedDates = Object.keys(matchesByDate).sort((a, b) => {
