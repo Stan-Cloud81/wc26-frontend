@@ -32,16 +32,16 @@ function Header({ onLogout, user }) {
       <div className="header-content">
         <nav className="nav">
           <NavLink to="/" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-            Home
+            <img src="/home.png" alt="Home" className="nav-icon" />
           </NavLink>
           <NavLink to="/family" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-            Family
+            <img src="/family.png" alt="Family" className="nav-icon" />
           </NavLink>
           <NavLink to="/matches" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-            Matches
+            <img src="/matches.png" alt="Matches" className="nav-icon" />
           </NavLink>
           <NavLink to="/standings" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-            Standings
+            <img src="/standings.png" alt="Standings" className="nav-icon" />
           </NavLink>
         </nav>
         <div className="user-menu" ref={dropdownRef}>

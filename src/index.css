@@ -247,9 +247,12 @@ body {
   }
   
   .nav-item {
-    padding: 0.5rem 0.5rem;
-    font-size: 0.8rem;
-    white-space: nowrap;
+    padding: 0.5rem;
+  }
+  
+  .nav-icon {
+    width: 24px;
+    height: 24px;
   }
   
   .user-avatar {
@@ -259,7 +262,7 @@ body {
 }
 
 .nav-item {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.85);
   font-weight: 600;
@@ -268,6 +271,18 @@ body {
   text-transform: uppercase;
   font-size: 0.9rem;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.85;
+  transition: all 0.3s;
 }
 
 .nav-item:hover {
@@ -276,11 +291,20 @@ body {
   border-radius: 8px 8px 0 0;
 }
 
+.nav-item:hover .nav-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
 .nav-item.active {
   color: white;
   border-bottom-color: white;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 8px 8px 0 0;
+}
+
+.nav-item.active .nav-icon {
+  opacity: 1;
 }
 
 .match-card {
