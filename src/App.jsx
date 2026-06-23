@@ -120,6 +120,7 @@ function AppRoutes({ user, login, logout }) {
   const navigate = useNavigate();
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [direction, setDirection] = useState('forward');
 
   const minSwipeDistance = 50;
 
@@ -144,10 +145,12 @@ function AppRoutes({ user, login, logout }) {
     const currentIndex = pages.indexOf(location.pathname);
     
     if (isLeftSwipe && currentIndex < pages.length - 1) {
+      setDirection('forward');
       navigate(pages[currentIndex + 1]);
     }
     
     if (isRightSwipe && currentIndex > 0) {
+      setDirection('backward');
       navigate(pages[currentIndex - 1]);
     }
   };
@@ -169,28 +172,30 @@ function AppRoutes({ user, login, logout }) {
   return (
     <>
       {user && <Header user={user} onLogout={logout} />}
-      <Routes>
-        <Route 
-          path="/login" 
-          element={!user ? <Login onLogin={login} /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/" 
-          element={user ? <Home user={user} /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/family" 
-          element={user ? <Family user={user} /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/matches" 
-          element={user ? <Matches /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/standings" 
-          element={user ? <Standings user={user} /> : <Navigate to="/login" />} 
-        />
-      </Routes>
+      <div className={`page-transition ${direction}`} key={location.pathname}>
+        <Routes location={location}>
+          <Route 
+            path="/login" 
+            element={!user ? <Login onLogin={login} /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/" 
+            element={user ? <Home user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/family" 
+            element={user ? <Family user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/matches" 
+            element={user ? <Matches /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/standings" 
+            element={user ? <Standings user={user} /> : <Navigate to="/login" />} 
+          />
+        </Routes>
+      </div>
     </>
   );
 }
