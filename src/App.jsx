@@ -1,13 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from './utils/api';
-import { clearAuthToken } from './utils/auth';
-import { subscribeToPushNotifications } from './utils/notifications';
 import { showToast } from './utils/toast';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Family from './pages/Family';
 import Standings from './pages/Standings';
+import Matches from './pages/Matches';
 import Header from './components/Header';
 
 const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE === 'true';
@@ -15,7 +14,7 @@ const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE === 'true';
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
     console.log('App mounted');
@@ -88,8 +87,6 @@ function App() {
     console.log('Login with user:', userData);
     setUser(userData);
     localStorage.setItem('wc26_user', JSON.stringify(userData));
-    
-    // await subscribeToPushNotifications(userData.id);
   };
 
   const logout = async () => {
@@ -123,34 +120,51 @@ function AppRoutes({ user, login, logout }) {
   const navigate = useNavigate();
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [touchStartY, setTouchStartY] = useState(null);
+  const [touchEndY, setTouchEndY] = useState(null);
+  const [direction, setDirection] = useState('forward');
 
   const minSwipeDistance = 50;
+  const maxSwipeAngle = 30;
 
-  const pages = ['/', '/family', '/standings'];
+  const pages = ['/', '/family', '/matches', '/standings'];
 
   const onTouchStart = (e) => {
     setTouchEnd(null);
+    setTouchEndY(null);
     setTouchStart(e.targetTouches[0].clientX);
+    setTouchStartY(e.targetTouches[0].clientY);
   };
 
   const onTouchMove = (e) => {
     setTouchEnd(e.targetTouches[0].clientX);
+    setTouchEndY(e.targetTouches[0].clientY);
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart || !touchEnd || !touchStartY || !touchEndY) return;
     
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
+    const distanceX = touchStart - touchEnd;
+    const distanceY = touchStartY - touchEndY;
+    
+    const angle = Math.abs(Math.atan2(distanceY, distanceX) * (180 / Math.PI));
+    
+    if (angle > maxSwipeAngle && angle < (180 - maxSwipeAngle)) {
+      return;
+    }
+    
+    const isLeftSwipe = distanceX > minSwipeDistance;
+    const isRightSwipe = distanceX < -minSwipeDistance;
 
     const currentIndex = pages.indexOf(location.pathname);
     
     if (isLeftSwipe && currentIndex < pages.length - 1) {
+      setDirection('forward');
       navigate(pages[currentIndex + 1]);
     }
     
     if (isRightSwipe && currentIndex > 0) {
+      setDirection('backward');
       navigate(pages[currentIndex - 1]);
     }
   };
@@ -167,29 +181,35 @@ function AppRoutes({ user, login, logout }) {
       document.removeEventListener('touchmove', onTouchMove);
       document.removeEventListener('touchend', onTouchEnd);
     };
-  }, [touchStart, touchEnd, location.pathname, user]);
+  }, [touchStart, touchEnd, touchStartY, touchEndY, location.pathname, user]);
 
   return (
     <>
       {user && <Header user={user} onLogout={logout} />}
-      <Routes>
-        <Route 
-          path="/login" 
-          element={!user ? <Login onLogin={login} /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/" 
-          element={user ? <Home user={user} /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/family" 
-          element={user ? <Family user={user} /> : <Navigate to="/login" />} 
-        />
-        <Route 
-          path="/standings" 
-          element={user ? <Standings user={user} /> : <Navigate to="/login" />} 
-        />
-      </Routes>
+      <div className={`page-transition ${direction}`} key={location.pathname}>
+        <Routes location={location}>
+          <Route 
+            path="/login" 
+            element={!user ? <Login onLogin={login} /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/" 
+            element={user ? <Home user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/family" 
+            element={user ? <Family user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/matches" 
+            element={user ? <Matches /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/standings" 
+            element={user ? <Standings user={user} /> : <Navigate to="/login" />} 
+          />
+        </Routes>
+      </div>
     </>
   );
 }

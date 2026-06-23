@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { hashPassword, setAuthToken, getAuthToken, clearAuthToken } from '../utils/auth';
+import LoadingSkeleton from '../components/LoadingSkeleton';
 
 function Login({ onLogin }) {
   const [step, setStep] = useState('password'); // 'password' or 'user-selection'
@@ -14,13 +15,6 @@ function Login({ onLogin }) {
     return `/users/${fileName}.png`;
   };
 
-  useEffect(() => {
-    const token = getAuthToken();
-    if (token) {
-      fetchUsers();
-    }
-  }, []);
-
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -32,7 +26,7 @@ function Login({ onLogin }) {
       } else {
         setError('No available users');
       }
-    } catch (err) {
+    } catch {
       clearAuthToken();
       setStep('password');
       setError('Session expired. Please login again.');
@@ -40,6 +34,13 @@ function Login({ onLogin }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const token = getAuthToken();
+    if (token) {
+      fetchUsers();
+    }
+  }, []);
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
@@ -82,7 +83,13 @@ function Login({ onLogin }) {
   };
 
   if (loading && step === 'password') {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="container">
+        <div className="card" style={{ marginTop: '2rem' }}>
+          <LoadingSkeleton />
+        </div>
+      </div>
+    );
   }
 
   if (step === 'user-selection') {
