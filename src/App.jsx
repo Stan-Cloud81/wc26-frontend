@@ -120,27 +120,41 @@ function AppRoutes({ user, login, logout }) {
   const navigate = useNavigate();
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [touchStartY, setTouchStartY] = useState(null);
+  const [touchEndY, setTouchEndY] = useState(null);
   const [direction, setDirection] = useState('forward');
 
   const minSwipeDistance = 50;
+  const maxSwipeAngle = 30;
 
   const pages = ['/', '/family', '/matches', '/standings'];
 
   const onTouchStart = (e) => {
     setTouchEnd(null);
+    setTouchEndY(null);
     setTouchStart(e.targetTouches[0].clientX);
+    setTouchStartY(e.targetTouches[0].clientY);
   };
 
   const onTouchMove = (e) => {
     setTouchEnd(e.targetTouches[0].clientX);
+    setTouchEndY(e.targetTouches[0].clientY);
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (!touchStart || !touchEnd || !touchStartY || !touchEndY) return;
     
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
+    const distanceX = touchStart - touchEnd;
+    const distanceY = touchStartY - touchEndY;
+    
+    const angle = Math.abs(Math.atan2(distanceY, distanceX) * (180 / Math.PI));
+    
+    if (angle > maxSwipeAngle && angle < (180 - maxSwipeAngle)) {
+      return;
+    }
+    
+    const isLeftSwipe = distanceX > minSwipeDistance;
+    const isRightSwipe = distanceX < -minSwipeDistance;
 
     const currentIndex = pages.indexOf(location.pathname);
     
@@ -167,7 +181,7 @@ function AppRoutes({ user, login, logout }) {
       document.removeEventListener('touchmove', onTouchMove);
       document.removeEventListener('touchend', onTouchEnd);
     };
-  }, [touchStart, touchEnd, location.pathname, user]);
+  }, [touchStart, touchEnd, touchStartY, touchEndY, location.pathname, user]);
 
   return (
     <>
