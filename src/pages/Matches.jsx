@@ -67,7 +67,7 @@ function Matches() {
     return () => clearInterval(interval);
   }, []);
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString, timezone) => {
     const date = new Date(dateString);
     const today = new Date();
     const tomorrow = new Date(today);
@@ -82,16 +82,16 @@ function Matches() {
     return date.toLocaleDateString('en-US', { 
       weekday: 'short', 
       month: 'short', 
-      day: 'numeric' 
+      day: 'numeric'
     });
   };
 
-  const formatTime = (dateString) => {
+  const formatTime = (dateString, timezone) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString('en-US', { 
       hour: 'numeric', 
       minute: '2-digit',
-      hour12: true 
+      hour12: true
     });
   };
 
@@ -119,7 +119,14 @@ function Matches() {
     
     return (
       <div key={match.id} className="match-item">
-        <div className="match-time">{formatTime(match.match_date)}</div>
+        <div className="match-time">
+          {formatTime(match.match_date, match.timezone)}
+          {match.timezone && match.location && (
+            <span className="match-timezone" title={match.timezone}>
+              {' '}• {match.location}
+            </span>
+          )}
+        </div>
         <div className="match-content">
           <div className="match-team">
             <img 
@@ -217,7 +224,7 @@ function Matches() {
       return (
         <div key={dateKey} className="date-group">
           <div className="date-header">
-            <span className="date-label">{formatDate(firstMatch.match_date)}</span>
+            <span className="date-label">{formatDate(firstMatch.match_date, firstMatch.timezone)}</span>
             <span className="date-count">{dateMatches.length} match{dateMatches.length !== 1 ? 'es' : ''}</span>
           </div>
           <div className="matches-list">

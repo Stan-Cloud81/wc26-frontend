@@ -677,6 +677,15 @@ body {
   color: var(--text-secondary);
   font-weight: 600;
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.match-timezone {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
 }
 
 .match-content {
