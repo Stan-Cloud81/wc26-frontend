@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import Family from './pages/Family';
 import Standings from './pages/Standings';
+import Matches from './pages/Matches';
 import Header from './components/Header';
 
 const DEBUG_MODE = import.meta.env.VITE_DEBUG_MODE === 'true';
@@ -122,7 +123,7 @@ function AppRoutes({ user, login, logout }) {
 
   const minSwipeDistance = 50;
 
-  const pages = ['/', '/family', '/standings'];
+  const pages = ['/', '/family', '/matches', '/standings'];
 
   const onTouchStart = (e) => {
     setTouchEnd(null);
@@ -180,6 +181,10 @@ function AppRoutes({ user, login, logout }) {
         <Route 
           path="/family" 
           element={user ? <Family user={user} /> : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/matches" 
+          element={user ? <Matches /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/standings" 

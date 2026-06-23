@@ -37,6 +37,9 @@ function Header({ onLogout, user }) {
           <NavLink to="/family" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
             Family
           </NavLink>
+          <NavLink to="/matches" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
+            Matches
+          </NavLink>
           <NavLink to="/standings" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
             Standings
           </NavLink>
