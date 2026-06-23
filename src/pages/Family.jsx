@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import ErrorWithRetry from '../components/ErrorWithRetry';
+import PointsBreakdown from '../components/PointsBreakdown';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 
 function Family({ user }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const countryToISO = {
     'Algeria': 'dz', 'Argentina': 'ar', 'Australia': 'au', 'Austria': 'at',
@@ -145,8 +147,33 @@ function Family({ user }) {
                   />
                   <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '600' }}>{u.name}</h3>
                 </div>
-                <div style={{ fontWeight: '700', fontSize: '1.2rem', color: 'var(--primary)' }}>
-                  {totalPoints} pts
+                <div 
+                  style={{ 
+                    fontWeight: '700', 
+                    fontSize: '1.2rem', 
+                    color: 'var(--primary)',
+                    cursor: 'pointer',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '6px',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    border: '2px dashed var(--primary)'
+                  }}
+                  onClick={() => setSelectedUser(u)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(60, 172, 59, 0.1)';
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
+                  title="Click to see points breakdown"
+                >
+                  <span>{totalPoints} pts</span>
+                  <span style={{ fontSize: '0.9rem' }}>📊</span>
                 </div>
               </div>
 
@@ -219,6 +246,14 @@ function Family({ user }) {
           );
         })}
       </div>
+      
+      {selectedUser && (
+        <PointsBreakdown 
+          userId={selectedUser.id}
+          userName={selectedUser.name}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </div>
   );
 }
