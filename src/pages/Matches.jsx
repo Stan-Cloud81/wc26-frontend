@@ -73,21 +73,16 @@ function Matches() {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const userDate = timezone ? 
-      new Date(date.toLocaleString('en-US', { timeZone: timezone })) : 
-      date;
-
-    const isToday = userDate.toDateString() === today.toDateString();
-    const isTomorrow = userDate.toDateString() === tomorrow.toDateString();
+    const isToday = date.toDateString() === today.toDateString();
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
 
     if (isToday) return 'Today';
     if (isTomorrow) return 'Tomorrow';
 
-    return userDate.toLocaleDateString('en-US', { 
+    return date.toLocaleDateString('en-US', { 
       weekday: 'short', 
       month: 'short', 
-      day: 'numeric',
-      timeZone: timezone || undefined
+      day: 'numeric'
     });
   };
 
@@ -96,8 +91,7 @@ function Matches() {
     return date.toLocaleTimeString('en-US', { 
       hour: 'numeric', 
       minute: '2-digit',
-      hour12: true,
-      timeZone: timezone || undefined
+      hour12: true
     });
   };
 
