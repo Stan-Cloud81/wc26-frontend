@@ -133,7 +133,27 @@ function Family({ user }) {
                 ...(u.id === user.id ? { border: '3px solid var(--primary)' } : {})
               }}
             >
-              <div style={{ padding: '0.75rem 1rem', background: 'var(--card-bg)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'space-between' }}>
+              <div 
+                style={{ 
+                  padding: '0.75rem 1rem', 
+                  background: 'var(--card-bg)', 
+                  borderBottom: '1px solid var(--border)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.75rem', 
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onClick={() => setSelectedUser(u)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(60, 172, 59, 0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'var(--card-bg)';
+                }}
+                title="Click to see points breakdown"
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <span style={{ fontWeight: '700', fontSize: rankFontSize, minWidth: rankMinWidth, color: rankColor }}>{rankDisplay}</span>
                   <img 
@@ -151,58 +171,39 @@ function Family({ user }) {
                   style={{ 
                     fontWeight: '700', 
                     fontSize: '1.2rem', 
-                    color: 'var(--primary)',
-                    cursor: 'pointer',
-                    padding: '0.25rem 0.5rem',
-                    borderRadius: '6px',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    border: '2px dashed var(--primary)'
+                    color: 'var(--primary)'
                   }}
-                  onClick={() => setSelectedUser(u)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(60, 172, 59, 0.1)';
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }}
-                  title="Click to see points breakdown"
                 >
-                  <span>{totalPoints} pts</span>
-                  <span style={{ fontSize: '0.9rem' }}>📊</span>
+                  {totalPoints} pts
                 </div>
               </div>
 
-              <div style={{ display: 'flex', height: '180px' }}>
+              <div style={{ display: 'flex', height: '110px' }}>
               {topTeam.name && (
                 <div style={{ flex: 1, position: 'relative', borderRight: `3px solid var(--gold)` }}>
                   <img 
                     src={getFlagUrl(topTeam.country)}
                     alt={topTeam.country}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                     onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120'%3E%3Crect fill='%23ddd' width='100' height='120'/%3E%3C/svg%3E`; }}
                   />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, transparent 70%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '1rem 0.75rem' }}>
-                    <div style={{ fontWeight: '700', fontSize: '0.95rem', color: 'white', marginBottom: '0.5rem', textAlign: 'center', lineHeight: '1.2' }}>
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 35%, transparent 60%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '0.5rem' }}>
+                    <div style={{ fontWeight: '700', fontSize: '0.85rem', color: 'white', marginBottom: '0.35rem', textAlign: 'center', lineHeight: '1.1' }}>
                       {topTeam.name}
                     </div>
                     {topTeam.stats && (
-                      <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.85rem', fontWeight: '600' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
-                          <span style={{ color: '#4ade80', fontSize: '1.1rem' }}>{topTeam.stats.wins || 0}</span>
-                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>W</span>
+                      <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', fontWeight: '600' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.05rem' }}>
+                          <span style={{ color: '#4ade80', fontSize: '0.95rem' }}>{topTeam.stats.wins || 0}</span>
+                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>W</span>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
-                          <span style={{ color: '#fbbf24', fontSize: '1.1rem' }}>{topTeam.stats.draws || 0}</span>
-                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>D</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.05rem' }}>
+                          <span style={{ color: '#fbbf24', fontSize: '0.95rem' }}>{topTeam.stats.draws || 0}</span>
+                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>D</span>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
-                          <span style={{ color: '#f87171', fontSize: '1.1rem' }}>{topTeam.stats.losses || 0}</span>
-                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>L</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.05rem' }}>
+                          <span style={{ color: '#f87171', fontSize: '0.95rem' }}>{topTeam.stats.losses || 0}</span>
+                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>L</span>
                         </div>
                       </div>
                     )}
@@ -215,26 +216,26 @@ function Family({ user }) {
                   <img 
                     src={getFlagUrl(notTopTeam.country)}
                     alt={notTopTeam.country}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                     onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120'%3E%3Crect fill='%23ddd' width='100' height='120'/%3E%3C/svg%3E`; }}
                   />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, transparent 70%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '1rem 0.75rem' }}>
-                    <div style={{ fontWeight: '700', fontSize: '0.95rem', color: 'white', marginBottom: '0.5rem', textAlign: 'center', lineHeight: '1.2' }}>
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 35%, transparent 60%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '0.5rem' }}>
+                    <div style={{ fontWeight: '700', fontSize: '0.85rem', color: 'white', marginBottom: '0.35rem', textAlign: 'center', lineHeight: '1.1' }}>
                       {notTopTeam.name}
                     </div>
                     {notTopTeam.stats && (
-                      <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.85rem', fontWeight: '600' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
-                          <span style={{ color: '#4ade80', fontSize: '1.1rem' }}>{notTopTeam.stats.wins || 0}</span>
-                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>W</span>
+                      <div style={{ display: 'flex', gap: '0.5rem', fontSize: '0.75rem', fontWeight: '600' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.05rem' }}>
+                          <span style={{ color: '#4ade80', fontSize: '0.95rem' }}>{notTopTeam.stats.wins || 0}</span>
+                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>W</span>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
-                          <span style={{ color: '#fbbf24', fontSize: '1.1rem' }}>{notTopTeam.stats.draws || 0}</span>
-                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>D</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.05rem' }}>
+                          <span style={{ color: '#fbbf24', fontSize: '0.95rem' }}>{notTopTeam.stats.draws || 0}</span>
+                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>D</span>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.1rem' }}>
-                          <span style={{ color: '#f87171', fontSize: '1.1rem' }}>{notTopTeam.stats.losses || 0}</span>
-                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem' }}>L</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.05rem' }}>
+                          <span style={{ color: '#f87171', fontSize: '0.95rem' }}>{notTopTeam.stats.losses || 0}</span>
+                          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.65rem' }}>L</span>
                         </div>
                       </div>
                     )}

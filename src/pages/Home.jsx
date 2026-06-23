@@ -295,7 +295,23 @@ function Home({ user }) {
           marginBottom: '1.5rem'
         }}
       >
-        <div style={{ padding: '0.75rem 1rem', background: 'var(--card-bg)', borderBottom: '1px solid var(--border)' }}>
+        <div 
+          style={{ 
+            padding: '0.75rem 1rem', 
+            background: 'var(--card-bg)', 
+            borderBottom: '1px solid var(--border)',
+            cursor: 'pointer',
+            transition: 'background 0.2s'
+          }}
+          onClick={() => setShowPointsBreakdown(true)}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(60, 172, 59, 0.05)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'var(--card-bg)';
+          }}
+          title="Click to see points breakdown"
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               {users.length > 0 && (() => {
@@ -321,29 +337,10 @@ function Home({ user }) {
                   style={{ 
                     fontWeight: '700', 
                     fontSize: '1.2rem', 
-                    color: 'var(--primary)', 
-                    cursor: 'pointer', 
-                    padding: '0.25rem 0.5rem', 
-                    borderRadius: '6px', 
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    border: '2px dashed var(--primary)'
+                    color: 'var(--primary)'
                   }}
-                  onClick={() => setShowPointsBreakdown(true)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(60, 172, 59, 0.1)';
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }}
-                  title="Click to see points breakdown"
                 >
-                  <span>{totalPoints} pts</span>
-                  <span style={{ fontSize: '0.9rem' }}>📊</span>
+                  {totalPoints} pts
                 </div>
               );
             })()}
