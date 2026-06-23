@@ -3,6 +3,7 @@ import api from '../utils/api';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import ErrorWithRetry from '../components/ErrorWithRetry';
 import PointsBreakdown from '../components/PointsBreakdown';
+import TeamMatches from '../components/TeamMatches';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 
 function Family({ user }) {
@@ -10,6 +11,7 @@ function Family({ user }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedTeam, setSelectedTeam] = useState(null);
 
   const countryToISO = {
     'Algeria': 'dz', 'Argentina': 'ar', 'Australia': 'au', 'Austria': 'at',
@@ -184,10 +186,11 @@ function Family({ user }) {
                   <img 
                     src={getFlagUrl(topTeam.country)}
                     alt={topTeam.country}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: 'pointer' }}
+                    onClick={() => setSelectedTeam({ name: topTeam.name, country: topTeam.country })}
                     onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120'%3E%3Crect fill='%23ddd' width='100' height='120'/%3E%3C/svg%3E`; }}
                   />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 35%, transparent 60%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '0.5rem' }}>
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 35%, transparent 60%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '0.5rem', pointerEvents: 'none' }}>
                     <div style={{ fontWeight: '700', fontSize: '0.85rem', color: 'white', marginBottom: '0.35rem', textAlign: 'center', lineHeight: '1.1' }}>
                       {topTeam.name}
                     </div>
@@ -216,10 +219,11 @@ function Family({ user }) {
                   <img 
                     src={getFlagUrl(notTopTeam.country)}
                     alt={notTopTeam.country}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: 'pointer' }}
+                    onClick={() => setSelectedTeam({ name: notTopTeam.name, country: notTopTeam.country })}
                     onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120'%3E%3Crect fill='%23ddd' width='100' height='120'/%3E%3C/svg%3E`; }}
                   />
-                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 35%, transparent 60%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '0.5rem' }}>
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 35%, transparent 60%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '0.5rem', pointerEvents: 'none' }}>
                     <div style={{ fontWeight: '700', fontSize: '0.85rem', color: 'white', marginBottom: '0.35rem', textAlign: 'center', lineHeight: '1.1' }}>
                       {notTopTeam.name}
                     </div>
@@ -253,6 +257,14 @@ function Family({ user }) {
           userId={selectedUser.id}
           userName={selectedUser.name}
           onClose={() => setSelectedUser(null)}
+        />
+      )}
+      
+      {selectedTeam && (
+        <TeamMatches 
+          teamName={selectedTeam.name}
+          teamCountry={selectedTeam.country}
+          onClose={() => setSelectedTeam(null)}
         />
       )}
     </div>

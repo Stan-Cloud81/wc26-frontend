@@ -4,6 +4,7 @@ import WinAnimation from '../components/WinAnimation';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import ErrorWithRetry from '../components/ErrorWithRetry';
 import PointsBreakdown from '../components/PointsBreakdown';
+import TeamMatches from '../components/TeamMatches';
 import usePullToRefresh from '../hooks/usePullToRefresh';
 
 function Home({ user }) {
@@ -15,6 +16,7 @@ function Home({ user }) {
   const [showTiedUsers, setShowTiedUsers] = useState(false);
   const [winAnimationData, setWinAnimationData] = useState(null);
   const [showPointsBreakdown, setShowPointsBreakdown] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState(null);
 
   const countryToISO = {
     'Algeria': 'dz', 'Argentina': 'ar', 'Australia': 'au', 'Austria': 'at',
@@ -401,10 +403,11 @@ function Home({ user }) {
               <img 
                 src={getFlagUrl(teams.team1.country)}
                 alt={teams.team1.country}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }}
+                onClick={() => setSelectedTeam({ name: teams.team1.name, country: teams.team1.country })}
                 onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120'%3E%3Crect fill='%23ddd' width='100' height='120'/%3E%3C/svg%3E`; }}
               />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, transparent 70%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '1rem 0.75rem' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, transparent 70%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '1rem 0.75rem', pointerEvents: 'none' }}>
                 <div style={{ fontWeight: '700', fontSize: '0.95rem', color: 'white', marginBottom: '0.5rem', textAlign: 'center', lineHeight: '1.2' }}>
                   {teams.team1.name}
                 </div>
@@ -433,10 +436,11 @@ function Home({ user }) {
               <img 
                 src={getFlagUrl(teams.team2.country)}
                 alt={teams.team2.country}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }}
+                onClick={() => setSelectedTeam({ name: teams.team2.name, country: teams.team2.country })}
                 onError={(e) => { e.target.onerror = null; e.target.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120'%3E%3Crect fill='%23ddd' width='100' height='120'/%3E%3C/svg%3E`; }}
               />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, transparent 70%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '1rem 0.75rem' }}>
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, transparent 70%)', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', padding: '1rem 0.75rem', pointerEvents: 'none' }}>
                 <div style={{ fontWeight: '700', fontSize: '0.95rem', color: 'white', marginBottom: '0.5rem', textAlign: 'center', lineHeight: '1.2' }}>
                   {teams.team2.name}
                 </div>
@@ -572,6 +576,14 @@ function Home({ user }) {
           userId={user.id}
           userName={user.name}
           onClose={() => setShowPointsBreakdown(false)}
+        />
+      )}
+      
+      {selectedTeam && (
+        <TeamMatches 
+          teamName={selectedTeam.name}
+          teamCountry={selectedTeam.country}
+          onClose={() => setSelectedTeam(null)}
         />
       )}
     </div>
